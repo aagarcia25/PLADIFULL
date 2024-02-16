@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // set up port
-const PORT = process.env.SRPU_B_APP_PORT || 8001;
+const PORT = 3000;
 app.use(express.json());
 app.use(cors());
 app.use(express.static("public"));

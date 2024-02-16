@@ -1,25 +1,27 @@
-version: '3'
+version: "3"
 services:
+  database:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: securepassword
+      MYSQL_DATABASE: PLADI
+      MYSQL_USER: pladiuser
+      MYSQL_PASSWORD: pladipassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db-scripts:/docker-entrypoint-initdb.d
+
   backend:
-    build: ./ruta-al-backend
+    build: ./pladiServices
     ports:
       - "3000:3000"
     depends_on:
       - database
 
   frontend:
-    build: ./ruta-al-frontend
+    build: ./pladi
     ports:
       - "80:80"
-
-  database:
-    image: mariadb:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: PLADI
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./db-scripts:/docker-entrypoint-initdb.d
+    depends_on:
+      - backend

@@ -12,4 +12,4 @@ RUN npm install
 EXPOSE 80
 
 # Comando para ejecutar la aplicación
-CMD ["npm", "start"]
+CMD ["sh", "-c", "while ! nc -z backend 3000; do sleep 1; done; npm start"]

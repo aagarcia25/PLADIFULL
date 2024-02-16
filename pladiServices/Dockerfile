@@ -6,10 +6,11 @@ WORKDIR /app
 COPY . .
 
 # Instala las dependencias
-RUN npm install
+RUN npm install -g nodemon
 
 # Expón el puerto en el que tu aplicación escucha
 EXPOSE 3000
 
 # Comando para ejecutar la aplicación
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm install && while ! nc -z database 3306; do sleep 1; done; npm start"]
+
