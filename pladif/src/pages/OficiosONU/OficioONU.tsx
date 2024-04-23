@@ -71,7 +71,7 @@ const OficioONU = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     };
 
     axios
-      .post("http://localhost:3001/onu", data)
+      .post("http://10.200.4.176:3001/onu", data)
       .then((response) => {
         console.log(response.data);
 

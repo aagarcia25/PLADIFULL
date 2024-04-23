@@ -39,7 +39,7 @@ const VisorDocumentosOficios = ({
       };
 
       axios
-        .post("http://localhost:3001/getListFiles", data)
+        .post("http://10.200.4.176:3001/getListFiles", data)
         .then((response) => {
           console.log(response.data);
 
@@ -72,7 +72,7 @@ const VisorDocumentosOficios = ({
     };
 
     axios
-      .post("http://localhost:3001/getFile", data)
+      .post("http://10.200.4.176:3001/getFile", data)
       .then((response) => {
         console.log(response.data);
 
@@ -119,7 +119,7 @@ const VisorDocumentosOficios = ({
       formData.append("P_ROUTE", explorerRoute + "/" + v);
 
       axios
-        .post("http://localhost:3001/" + "createfolder", formData, {
+        .post("http://10.200.4.176:3001/" + "createfolder", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             "X-Requested-With": "XMLHttpRequest",
@@ -157,7 +157,7 @@ const VisorDocumentosOficios = ({
     };
 
     axios
-      .post("http://localhost:3001/getFile", data)
+      .post("http://10.200.4.176:3001/getFile", data)
       .then((response) => {
         console.log(response.data);
         // Manejar la respuesta del servidor
