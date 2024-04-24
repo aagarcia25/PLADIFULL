@@ -8,6 +8,10 @@ import MUIXDataGrid from "../../share/MUIXDataGrid";
 import MsgAlert from "../../share/MsgAlert";
 import Progress from "../../share/Progress";
 import VisorDocumentosOficios from "../../share/VisorDocumentosOficios";
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import PriceCheckIcon from "@mui/icons-material/PriceCheck";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+
 const OficioONU = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   const [idowner, setidowner] = useState<string>("");
   const [openModalFiles, setopenModalFiles] = useState(false);
@@ -21,6 +25,24 @@ const OficioONU = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   const handleVerSub = (v: any) => {
     console.log(v);
     setidowner("\\ONU\\" + v.row.Id);
+    setopenModalFiles(true);
+  };
+
+  const handleEntregables = (v: any) => {
+    console.log(v);
+    setidowner("\\ONU\\" + v.row.Id + "\\ENTREGABLES\\");
+    setopenModalFiles(true);
+  };
+
+  const handleActas = (v: any) => {
+    console.log(v);
+    setidowner("\\ONU\\" + v.row.Id + "\\ACTAS\\");
+    setopenModalFiles(true);
+  };
+
+  const handleFacturas = (v: any) => {
+    console.log(v);
+    setidowner("\\ONU\\" + v.row.Id + "\\FACTURAS\\");
     setopenModalFiles(true);
   };
 
@@ -45,6 +67,27 @@ const OficioONU = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
               handleFunction={() => handleVerSub(v)}
               show={true}
               icon={<FilePresentIcon />}
+              row={v}
+            ></ButtonsDetail>
+            <ButtonsDetail
+              title={"Entregables"}
+              handleFunction={() => handleEntregables(v)}
+              show={true}
+              icon={<PostAddIcon />}
+              row={v}
+            ></ButtonsDetail>
+            <ButtonsDetail
+              title={"Actas"}
+              handleFunction={() => handleActas(v)}
+              show={true}
+              icon={<ReceiptLongIcon />}
+              row={v}
+            ></ButtonsDetail>
+            <ButtonsDetail
+              title={"Facturas"}
+              handleFunction={() => handleFacturas(v)}
+              show={true}
+              icon={<PriceCheckIcon />}
               row={v}
             ></ButtonsDetail>
           </>
