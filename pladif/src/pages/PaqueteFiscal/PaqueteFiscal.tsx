@@ -94,7 +94,7 @@ const PaqueteFiscal = ({
     };
 
     axios
-      .post("http://localhost:3001/PF", data)
+      .post("http://10.200.4.176:3001/PF", data)
       .then((response) => {
         console.log(response.data);
 
