@@ -1,7 +1,7 @@
 import DownloadingIcon from "@mui/icons-material/Downloading";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, IconButton, ToggleButton, Typography } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -15,6 +15,8 @@ import MUIXDataGrid from "./MUIXDataGrid";
 import Progress from "./Progress";
 import MsgAlert from "./MsgAlert";
 import { base64ToArrayBuffer } from "../utils/Files";
+import { TooltipPersonalizado } from "./CustomizedTooltips";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 const VisorDocumentosOficios = ({
   handleFunction,
   obj,
@@ -39,7 +41,7 @@ const VisorDocumentosOficios = ({
       };
 
       axios
-        .post("http://10.200.4.176:3001/getListFiles", data)
+        .post("http://localhost:3001/getListFiles", data)
         .then((response) => {
           console.log(response.data);
 
@@ -72,7 +74,7 @@ const VisorDocumentosOficios = ({
     };
 
     axios
-      .post("http://10.200.4.176:3001/getFile", data)
+      .post("http://localhost:3001/getFile", data)
       .then((response) => {
         console.log(response.data);
 
@@ -119,7 +121,7 @@ const VisorDocumentosOficios = ({
       formData.append("P_ROUTE", explorerRoute + "/" + v);
 
       axios
-        .post("http://10.200.4.176:3001/" + "createfolder", formData, {
+        .post("http://localhost:3001/" + "createfolder", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             "X-Requested-With": "XMLHttpRequest",
@@ -157,7 +159,7 @@ const VisorDocumentosOficios = ({
     };
 
     axios
-      .post("http://10.200.4.176:3001/getFile", data)
+      .post("http://localhost:3001/getFile", data)
       .then((response) => {
         console.log(response.data);
         // Manejar la respuesta del servidor
@@ -207,32 +209,53 @@ const VisorDocumentosOficios = ({
             P_ROUTE: explorerRoute,
             P_NOMBRE: v.data.row.name,
           };
-          // AuthService.deletedFile(data).then((res) => {
-          //   if (res.SUCCESS) {
-          //     Toast.fire({
-          //       icon: "success",
-          //       title: "¡Registro Eliminado!",
-          //     });
-          //     consulta();
-          //   } else {
-          //     Swal.fire("¡Error!", res.STRMESSAGE, "error");
-          //   }
-          // });
+
+          axios
+            .post("http://localhost:3001/deletedFile", data)
+            .then((response) => {
+              console.log(response.data);
+              if (response.status == 200) {
+                setData(response.data.RESPONSE);
+                setOpenSlider(false);
+                consulta();
+              } else {
+                setOpenSlider(false);
+                Swal.fire({
+                  title: "Acceso",
+                  text: "Error",
+                  icon: "error",
+                });
+              }
+            })
+            .catch((error) => {
+              MsgAlert("Error", error, "error");
+              setOpenSlider(false);
+            });
         } else {
           let data = {
             P_ROUTE: explorerRoute,
           };
-          // AuthService.deletedFolder(data).then((res) => {
-          //   if (res.SUCCESS) {
-          //     Toast.fire({
-          //       icon: "success",
-          //       title: "¡Registro Eliminado!",
-          //     });
-          //     consulta();
-          //   } else {
-          //     Swal.fire("¡Error!", res.STRMESSAGE, "error");
-          //   }
-          // });
+          axios
+            .post("http://localhost:3001/deletedFolder", data)
+            .then((response) => {
+              console.log(response.data);
+              if (response.status == 200) {
+                setData(response.data.RESPONSE);
+                setOpenSlider(false);
+                consulta();
+              } else {
+                setOpenSlider(false);
+                Swal.fire({
+                  title: "Acceso",
+                  text: "Error",
+                  icon: "error",
+                });
+              }
+            })
+            .catch((error) => {
+              MsgAlert("Error", error, "error");
+              setOpenSlider(false);
+            });
         }
       } else if (result.isDenied) {
         Swal.fire("No se realizaron cambios", "", "info");
@@ -321,6 +344,65 @@ const VisorDocumentosOficios = ({
     }
   };
 
+  const ProcesaSPeis = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setOpenSlider(true);
+    let count = 0;
+    let encontrados: any[] = [];
+    let counfiles = event?.target?.files?.length;
+    let peticiones: any[] = [];
+
+    for (let i = 0; i < Number(counfiles); i++) {
+      let file = event?.target?.files?.[i] || "";
+      let namefile = event?.target?.files?.[i].name || "";
+      encontrados.push({ Archivo: file, NOMBRE: namefile });
+    }
+
+    encontrados.map((item: any) => {
+      const formData = new FormData();
+      formData.append("ruta", explorerRoute);
+      formData.append("file", item.Archivo, item.NOMBRE);
+      formData.append("nombreArchivo", item.NOMBRE);
+
+      let p = axios.post("http://localhost:3001/saveFile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-Requested-With": "XMLHttpRequest",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
+      peticiones.push(p);
+    });
+
+    axios.all(peticiones).then((resposeArr) => {
+      resposeArr.map((item) => {
+        console.log(item);
+        if (item.data.SUCCESS) {
+          count++;
+        } else {
+          count--;
+        }
+      });
+
+      if (count == 0 || count == -1) {
+        Swal.fire("¡Error!", "No se Realizo la Operación", "error");
+        setOpenSlider(false);
+      } else {
+        setOpenSlider(false);
+        Swal.fire({
+          icon: "success",
+          title: "Información",
+          text: "Archivos Subidos " + count,
+          confirmButtonText: "Ok",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            setOpenSlider(false);
+            consulta();
+          }
+        });
+      }
+    });
+  };
+
   useEffect(() => {
     setexplorerRoute(breadcrumbs.join(""));
   }, [breadcrumbs]);
@@ -340,6 +422,33 @@ const VisorDocumentosOficios = ({
 
         <Grid container>
           <Grid item xs={12} sm={4} md={4} lg={4}>
+            <TooltipPersonalizado
+              title={
+                <React.Fragment>
+                  <Typography color="inherit">Cargar Documentos</Typography>
+                  {"Permite la carga de Documentos de Forma Masiva "}
+                </React.Fragment>
+              }
+            >
+              <ToggleButton value="check">
+                <IconButton
+                  color="primary"
+                  aria-label="upload documento"
+                  component="label"
+                  size="small"
+                >
+                  <input
+                    multiple
+                    hidden
+                    accept=".*"
+                    type="file"
+                    value=""
+                    onChange={(v) => ProcesaSPeis(v)}
+                  />
+                  <FileUploadIcon />
+                </IconButton>
+              </ToggleButton>
+            </TooltipPersonalizado>
             <MUIXDataGrid columns={columns} rows={data} />
           </Grid>
           <Grid item xs={12} sm={8} md={8} lg={8}>

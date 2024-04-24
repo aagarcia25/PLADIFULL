@@ -135,7 +135,7 @@ const OficioPresupuesto = ({
     };
 
     axios
-      .post("http://10.200.4.176:3001/presupuesto", data)
+      .post("http://localhost:3001/presupuesto", data)
       .then((response) => {
         console.log(response.data);
 

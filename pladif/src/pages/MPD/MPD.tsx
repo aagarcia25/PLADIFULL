@@ -66,7 +66,7 @@ const MPD = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       P_Id: id,
     };
     axios
-      .post("http://10.200.4.176:3001/MPD", data)
+      .post("http://localhost:3001/MPD", data)
       .then((response) => {
         console.log(response.data);
 

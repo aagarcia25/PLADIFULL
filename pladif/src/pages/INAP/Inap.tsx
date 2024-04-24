@@ -78,7 +78,7 @@ const Inap = () => {
         formData.append("P_ID", id);
         // formData.append("P_CreadoPor", user.Id);
         const response = await axios.post(
-          "http://10.200.4.176:3001/" + "/migradata",
+          "http://localhost:3001/" + "/migradata",
           formData
         );
         console.log("respuesta de archivo");
@@ -108,7 +108,7 @@ const Inap = () => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/inapGral01All", data)
+      .post("http://localhost:3001/inapGral01All", data)
       .then((response) => {
         console.log(response.data);
 
@@ -143,7 +143,7 @@ const Inap = () => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/inapGralAll", data)
+      .post("http://localhost:3001/inapGralAll", data)
       .then((response) => {
         console.log(response.data);
 

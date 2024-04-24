@@ -109,7 +109,7 @@ const SIREGOB = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/siregob", data)
+      .post("http://localhost:3001/siregob", data)
       .then((response) => {
         console.log(response.data);
 

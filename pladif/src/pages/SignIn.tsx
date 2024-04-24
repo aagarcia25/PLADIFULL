@@ -23,7 +23,7 @@ const SignIn = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const login = () => {
     axios
-      .post("http://10.200.4.176:3001/login", {
+      .post("http://localhost:3001/login", {
         username,
         pass,
       })
@@ -47,10 +47,7 @@ const SignIn = () => {
           icon: "error",
         });
         console.error(error);
-        // Manejar el error
       });
-
-    //navigate("/home/");
   };
 
   return (
@@ -63,13 +60,12 @@ const SignIn = () => {
           sm={4}
           md={7}
           sx={{
-            // Cambiar a sx=
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             backgroundRepeat: "no-repeat",
             backgroundColor:
-              theme.palette.mode === "light" // Cambiar a theme.palette.mode
+              theme.palette.mode === "light"
                 ? theme.palette.grey[50]
                 : theme.palette.grey[900],
             backgroundSize: "cover",
@@ -104,7 +100,7 @@ const SignIn = () => {
           <Typography
             variant={isSmallScreen ? "subtitle1" : "h5"}
             sx={{
-              textAlign: "center", // Centra el texto horizontalmente
+              textAlign: "center",
               marginTop: "20px",
             }}
           >
@@ -143,7 +139,7 @@ const SignIn = () => {
               variant="contained"
               color="error"
               sx={{
-                marginTop: "20px", // Agregar margen superior
+                marginTop: "20px",
               }}
               onClick={login}
               disabled={!(username.trim() !== "" && pass.trim() !== "")}

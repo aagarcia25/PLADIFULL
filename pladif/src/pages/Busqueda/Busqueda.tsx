@@ -45,7 +45,7 @@ const Busqueda = () => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/inapGralAll", data)
+      .post("http://localhost:3001/inapGralAll", data)
       .then((response) => {
         console.log(response.data);
 
@@ -276,12 +276,11 @@ const Busqueda = () => {
               fullWidth
             />
           </Box>
-        </Grid>
-        <Grid item xs={2}>
           <Button
             onClick={() => {
               consulta();
             }}
+            sx={{ marginTop: 2, marginBottom: 2 }}
             variant="contained"
             color="success"
           >

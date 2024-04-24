@@ -1,3 +1,5 @@
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import ArticleIcon from "@mui/icons-material/Article";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
@@ -8,7 +10,6 @@ import {
   Container,
   CssBaseline,
   Divider,
-  Grid,
   IconButton,
   List,
   ListItemButton,
@@ -23,9 +24,7 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import MuiDrawer from "@mui/material/Drawer";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import ArticleIcon from "@mui/icons-material/Article";
 import logo from "../assets/logo_genl.svg";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
 const drawerWidth: number = 280;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -106,7 +105,7 @@ const Main = () => {
         >
           <Toolbar
             sx={{
-              pr: "24px", // keep right padding when drawer closed
+              pr: "24px",
             }}
           >
             <IconButton

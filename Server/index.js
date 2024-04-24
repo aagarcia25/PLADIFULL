@@ -8,7 +8,7 @@ const cors = require("cors");
 const fs = require("fs");
 const multer = require("multer");
 
-const ruta = "Y:\\PLADI\\PLADI";
+const ruta = "C:\\PLADI";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -25,7 +25,7 @@ const buildResponse = (response, success, numCode, strMessage) => ({
 const db = new sqlite3.Database("database/database.db");
 app.use(bodyParser.json());
 app.use(cors());
-
+/*
 const schema = fs.readFileSync("database/schema.sql", "utf8");
 
 db.exec(schema, function (err) {
@@ -61,7 +61,7 @@ db.exec(schema, function (err) {
     });
   });
 });
-
+*/
 app.post("/login", (req, res) => {
   const { username, pass } = req.body;
 
@@ -138,7 +138,6 @@ app.post("/siregob", (req, res) => {
     // Define el parámetro de búsqueda
     params.$parametro_busqueda = BUSQUEDA;
   }
-  console.log(sql);
 
   db.all(sql, params, (err, rows) => {
     if (err) {
@@ -263,7 +262,7 @@ app.post("/presupuesto", (req, res) => {
   let params = {};
 
   if (TIPO == 4) {
-    const sql = `
+    sql = `
      SELECT
      id,
      Folio,
@@ -481,17 +480,24 @@ const createFolderIfNotExists = async (folderPath) => {
   }
 };
 
+// Función para eliminar directorios de manera recursiva
 const removeFolderRecursive = async (dir) => {
   const contents = await fs2.readdir(dir);
+
   for (const content of contents) {
     const contentPath = path.join(dir, content);
     const stat = await fs2.lstat(contentPath);
+
     if (stat.isDirectory()) {
+      // Si es un directorio, llamar a la función recursivamente
       await removeFolderRecursive(contentPath);
     } else {
+      // Si es un archivo, eliminarlo
       await fs2.unlink(contentPath);
     }
   }
+
+  // Después de eliminar el contenido, eliminar el directorio en sí
   await fs2.rmdir(dir);
 };
 
@@ -522,13 +528,9 @@ app.post("/getListFiles", async (req, res) => {
     if (!req.body.P_ROUTE) {
       throw new Error("No se proporcionó la ruta del archivo");
     }
-
-    const folder = req.body.P_ROUTE;
-    const filePath = path.join(ruta, folder);
-    console.log("RUTA de archivo");
+    const filePath = path.join(ruta, req.body.P_ROUTE);
     console.log(filePath);
     await createFolderIfNotExists(filePath);
-
     const content = await fs2.readdir(filePath);
 
     const filesAndDirectories = await Promise.all(
@@ -686,7 +688,6 @@ app.post("/onu", (req, res) => {
     // Define el parámetro de búsqueda
     params.$parametro_busqueda = BUSQUEDA;
   }
-  console.log(sql);
 
   db.all(sql, params, (err, rows) => {
     if (err) {
@@ -704,6 +705,79 @@ app.post("/onu", (req, res) => {
         .json({ message: "Data retrieved successfully", datos: [] });
     }
   });
+});
+
+app.post("/deletedFile", async (req, res) => {
+  try {
+    if (!req.body.P_ROUTE) {
+      throw new Error("No se proporcionó la ruta del archivo");
+    }
+
+    if (!req.body.P_NOMBRE) {
+      throw new Error("No se proporcionó el nombre del archivo");
+    }
+    const filePath = `${ruta}/${req.body.P_ROUTE}/${req.body.P_NOMBRE}`;
+    await fs2.unlink(filePath);
+
+    const responseData = buildResponse([], true, 200, "Exito");
+    res.status(200).json(responseData);
+  } catch (error) {
+    const responseData = buildResponse(null, false, 500, error.message);
+    res.status(500).json(responseData);
+  }
+});
+
+app.post("/deletedFolder", async (req, res) => {
+  try {
+    if (!req.body.P_ROUTE) {
+      throw new Error("No se proporcionó la ruta del archivo");
+    }
+
+    const filePath = `${ruta}/${req.body.P_ROUTE}`;
+    const exists = await fs2.stat(filePath);
+    if (exists.isDirectory()) {
+      await removeFolderRecursive(filePath);
+    } else {
+      throw new Error("La ruta proporcionada no es un directorio.");
+    }
+
+    const responseData = buildResponse([], true, 200, "Exito");
+    res.status(200).json(responseData);
+  } catch (error) {
+    const responseData = buildResponse(null, false, 500, error.message);
+    res.status(500).json(responseData);
+  }
+});
+
+app.post("/saveFile", upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) {
+      throw new Error("No se proporcionó ningún archivo en la solicitud.");
+    }
+
+    const contenido = req.file.buffer;
+    const nombreArchivo = req.body.nombreArchivo;
+    const rutacarpeta = req.body.ruta;
+
+    if (!nombreArchivo) {
+      throw new Error(
+        "El nombre del archivo no está especificado en la solicitud."
+      );
+    }
+    const rutaCARPETA = `${ruta}/${rutacarpeta}`;
+    const rutaArchivo = `${ruta}/${rutacarpeta}/${nombreArchivo}`;
+
+    console.log("RUTA de rutaCARPETA");
+    console.log(rutaCARPETA);
+    await createFolderIfNotExists(rutaCARPETA);
+
+    await fs2.writeFile(rutaArchivo, contenido);
+    const responseData = buildResponse([], true, 200, "Exito");
+    res.status(200).json(responseData);
+  } catch (error) {
+    const responseData = buildResponse(null, false, 500, error.message);
+    res.status(500).json(responseData);
+  }
 });
 
 app.listen(port, () => {
