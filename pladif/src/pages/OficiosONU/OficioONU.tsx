@@ -24,7 +24,7 @@ const OficioONU = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
 
   const handleVerSub = (v: any) => {
     console.log(v);
-    setidowner("\\ONU\\" + v.row.Id);
+    setidowner("\\ONU\\" + v.row.Id + "\\DOCUMENTOS\\");
     setopenModalFiles(true);
   };
 
