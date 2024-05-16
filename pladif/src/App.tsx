@@ -12,6 +12,7 @@ import PPI from "./pages/ProyectoInversion/PPI";
 import SIREGOB from "./pages/SIREGOB/SIREGOB";
 import SignIn from "./pages/SignIn";
 import OficioONU from "./pages/OficiosONU/OficioONU";
+import Transferencias from "./pages/Trasnsferencias/Transferencias";
 
 function App() {
   return (
@@ -29,6 +30,10 @@ function App() {
             <Route path="mpd" element={<MPD tipo={"CONS"} />} />
             <Route path="onu" element={<OficioONU tipo={"CONS"} />} />
             <Route path="auditoria" element={<Auditoria tipo={"CONS"} />} />
+            <Route
+              path="trasnsferencias"
+              element={<Transferencias tipo={"CONS"} />}
+            />
             <Route
               path="presupuesto"
               element={<OficioPresupuesto tipo={"CONS"} />}

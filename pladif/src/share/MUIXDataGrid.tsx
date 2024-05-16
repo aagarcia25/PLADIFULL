@@ -6,16 +6,10 @@ import {
 import React from "react";
 
 export default function MUIXDataGrid(props: any) {
-  const [pageSize, setPageSize] = React.useState(10);
-
   const [columnVisibilityModel, setColumnVisibilityModel] =
     React.useState<GridColumnVisibilityModel>({
       id: false,
     });
-
-  const hasData = props.rows.length < 8;
-
-  const Data = props.rows.length === 0;
 
   return (
     <div style={{ height: "70vh", overflow: "auto" }}>
@@ -33,7 +27,7 @@ export default function MUIXDataGrid(props: any) {
         disableDensitySelector
         getRowId={(row) => (row.Id ? row.Id : row.id)}
         rowHeight={255}
-        pageSize={pageSize}
+        pageSize={100}
         getRowHeight={() => "auto"}
         sx={{
           fontFamily: "Poppins,sans-serif",
@@ -49,18 +43,6 @@ export default function MUIXDataGrid(props: any) {
             showQuickFilter: true,
           },
         }}
-        // components={{ Toolbar: GridToolbar }}
-        // componentsProps={{
-        //   toolbar: {
-        //     label: "Buscar",
-        //     showQuickFilter: true,
-        //     quickFilterProps: { debounceMs: 500 },
-        //     csvOptions: {
-        //       fileName: props.modulo,
-        //       utf8WithBom: true,
-        //     },
-        //   },
-        // }}
         localeText={{
           columnsPanelHideAllButton: "Ocultar todo",
           columnsPanelShowAllButton: "Mostrar todo",

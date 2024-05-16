@@ -25,7 +25,7 @@ const buildResponse = (response, success, numCode, strMessage) => ({
 const db = new sqlite3.Database("database/database.db");
 app.use(bodyParser.json());
 app.use(cors());
-/*
+
 const schema = fs.readFileSync("database/schema.sql", "utf8");
 
 db.exec(schema, function (err) {
@@ -61,7 +61,7 @@ db.exec(schema, function (err) {
     });
   });
 });
-*/
+
 app.post("/login", (req, res) => {
   const { username, pass } = req.body;
 
@@ -318,6 +318,109 @@ app.post("/presupuesto", (req, res) => {
       presupuestos
   WHERE
       UPPER(CONCAT_WS('|', Folio, OficioRespuesta, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, ClaveTipoSolicitud, TipoSolicitud, strftime('%d/%m/%Y', FechaOficio), strftime('%d/%m/%Y', FechaRecepcion), strftime('%d/%m/%Y', FechaElaboracion), strftime('%d/%m/%Y', FechaVencimiento), Monto, MontoAmpliacion, Comentarios, strftime('%d/%m/%Y', FechaTurno), ObservacionesEstatus, strftime('%d/%m/%Y', FechaTurnada), strftime('%d/%m/%Y', FechaTerminada), Anio)) LIKE UPPER('%' || $parametro_busqueda || '%');`;
+
+    params.$parametro_busqueda = BUSQUEDA;
+  }
+
+  db.all(sql, params, (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    if (rows.length > 0) {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: rows });
+    } else {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: [] });
+    }
+  });
+});
+
+app.post("/transferencias", (req, res) => {
+  const { TIPO, BUSQUEDA } = req.body;
+  let sql;
+  let params = {};
+
+  if (TIPO == 4) {
+    sql = `
+     SELECT 
+	          id,
+	          Anio,
+	          Folio,
+	          Respuesta,
+	          OficioDependencia,
+	          Secretaria,
+	          Dependencia,
+	          TipoGasto,
+	          Estatus,
+	          Responsable,
+	          TipoSolicitud,
+	          FechaOficio,
+	          FechaRecepcion,
+	          FechaElaboracion,
+	          FechaVencimiento,
+	          Monto,
+	          montoAmpliacion,
+	          Comentarios,
+	          FechaTurno,
+	          ObservacionesEstatus,
+	          AsignadoDependencia,
+	          TramitadoDAMOP,
+	          FechaCapturada,
+	          ObservacionesCapturada,
+	          FechaTurnada,
+	          ObservacionesTurnada,
+	          FechaStanBy,
+	          ObservacionesStandBy,
+	          FechaTerminada,
+	          ObservacionesTerminada
+      FROM transferencias
+;
+   `;
+  } else if (TIPO == 5 && BUSQUEDA !== "") {
+    sql = `
+    
+     
+           SELECT 
+                id,
+                Anio,
+                Folio,
+                Respuesta,
+                OficioDependencia,
+                Secretaria,
+                Dependencia,
+                TipoGasto,
+                Estatus,
+                Responsable,
+                TipoSolicitud,
+                FechaOficio,
+                FechaRecepcion,
+                FechaElaboracion,
+                FechaVencimiento,
+                Monto,
+                montoAmpliacion,
+                Comentarios,
+                FechaTurno,
+                ObservacionesEstatus,
+                AsignadoDependencia,
+                TramitadoDAMOP,
+                FechaCapturada,
+                ObservacionesCapturada,
+                FechaTurnada,
+                ObservacionesTurnada,
+                FechaStanBy,
+                ObservacionesStandBy,
+                FechaTerminada,
+                ObservacionesTerminada
+        FROM transferencias
+        WHERE
+        UPPER(CONCAT_WS('|', Folio, Respuesta, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, TipoSolicitud, FechaOficio, FechaRecepcion, FechaElaboracion, FechaVencimiento, Monto, montoAmpliacion, Comentarios, FechaTurno, ObservacionesEstatus, FechaTurnada, FechaTerminada, Anio)) LIKE UPPER('%' || $parametro_busqueda || '%');
+
+      `;
 
     params.$parametro_busqueda = BUSQUEDA;
   }
