@@ -17,6 +17,7 @@ import OficioONU from "../OficiosONU/OficioONU";
 import OficioPresupuesto from "../OficiosPresupuesto/OficioPresupuesto";
 import PPI from "../ProyectoInversion/PPI";
 import SIREGOB from "../SIREGOB/SIREGOB";
+import Transferencias from "../Trasnsferencias/Transferencias";
 const Busqueda = () => {
   const [idowner, setidowner] = useState<string>("");
   const [openModalFiles, setopenModalFiles] = useState(false);
@@ -385,6 +386,27 @@ const Busqueda = () => {
           </Typography>
           <SIREGOB tipo={"BUS"} Busqueda={busqueda}></SIREGOB>
         </Grid>
+      </Grid>
+
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Grid border={1} item xs={6} sm={6} md={6} lg={6}>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="#000000"
+            noWrap
+            sx={{ flexGrow: 1, textAlign: "center" }}
+          >
+            TRANSFERENCIAS
+          </Typography>
+          <Transferencias tipo={"BUS"} Busqueda={busqueda}></Transferencias>
+        </Grid>
+        <Grid border={1} item xs={6} sm={6} md={6} lg={6}></Grid>
       </Grid>
 
       {openModalFiles ? (
