@@ -299,6 +299,33 @@ const Main = () => {
               </ListItemButton>
             </Tooltip>
 
+            <Tooltip title={"Transferencias Presupuestales"}>
+              <ListItemButton
+                onClick={() => {
+                  setSelectedOption("trasnsferencias");
+                  navigate("/home/trasnsferencias");
+                }}
+                style={{
+                  backgroundColor:
+                    selectedOption === "trasnsferencias"
+                      ? "#DBA901"
+                      : "transparent",
+                }}
+              >
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Transferencias Presupuestales"
+                  style={{
+                    color:
+                      selectedOption === "trasnsferencias" ? "#FFFFFF" : "",
+                  }}
+                />
+              </ListItemButton>
+            </Tooltip>
+
+            {/* 
             <Tooltip
               title={
                 "Control y Administración de los Oficios Correspondientes a Municipios"
@@ -310,7 +337,8 @@ const Main = () => {
                 </ListItemIcon>
                 <ListItemText primary="Oficios DAMOP" />
               </ListItemButton>
-            </Tooltip>
+            </Tooltip> */}
+
             <Tooltip
               title={
                 "Control y Administración de los Oficios Correspondientes a Auditorias"
