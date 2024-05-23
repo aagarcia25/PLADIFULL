@@ -575,6 +575,72 @@ app.post("/PF", (req, res) => {
   });
 });
 
+app.post("/gastocapital", (req, res) => {
+  const { TIPO, BUSQUEDA } = req.body;
+  let sql;
+  let params = {};
+
+  if (TIPO == 4) {
+    sql = `
+      SELECT * FROM polizas WHERE Texto LIKE '%GASTO CAPITAL%';
+   `;
+  } else if (TIPO == 5 && BUSQUEDA !== "") {
+    sql = `
+      SELECT * FROM pf
+   `;
+    params.$parametro_busqueda = BUSQUEDA;
+  }
+  db.all(sql, params, (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    if (rows.length > 0) {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: rows });
+    } else {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: [] });
+    }
+  });
+});
+
+app.post("/gastocorriente", (req, res) => {
+  const { TIPO, BUSQUEDA } = req.body;
+  let sql;
+  let params = {};
+
+  if (TIPO == 4) {
+    sql = `
+     SELECT * FROM polizas WHERE Texto LIKE '%GASTO CORRIENTE%';
+   `;
+  } else if (TIPO == 5 && BUSQUEDA !== "") {
+    sql = `
+     SELECT * FROM polizas WHERE Texto LIKE '%GASTO CORRIENTE%';
+   `;
+    params.$parametro_busqueda = BUSQUEDA;
+  }
+  db.all(sql, params, (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    if (rows.length > 0) {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: rows });
+    } else {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: [] });
+    }
+  });
+});
+
 const createFolderIfNotExists = async (folderPath) => {
   try {
     await fs2.access(folderPath);
@@ -876,6 +942,27 @@ app.post("/saveFile", upload.single("file"), async (req, res) => {
 
     await fs2.writeFile(rutaArchivo, contenido);
     const responseData = buildResponse([], true, 200, "Exito");
+    res.status(200).json(responseData);
+  } catch (error) {
+    const responseData = buildResponse(null, false, 500, error.message);
+    res.status(500).json(responseData);
+  }
+});
+
+app.post("/getFileByRoute", async (req, res) => {
+  try {
+    if (!req.body.P_ROUTE) {
+      throw new Error("No se proporcionó la ruta del archivo");
+    }
+    const filePath = `${req.body.P_ROUTE}`;
+    const fileContent = await fs2.readFile(filePath, { encoding: "base64" });
+
+    const responseData = buildResponse(
+      { FILE: fileContent, TIPO: ".pdf" },
+      true,
+      200,
+      "Exito"
+    );
     res.status(200).json(responseData);
   } catch (error) {
     const responseData = buildResponse(null, false, 500, error.message);

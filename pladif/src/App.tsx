@@ -13,6 +13,8 @@ import SIREGOB from "./pages/SIREGOB/SIREGOB";
 import SignIn from "./pages/SignIn";
 import OficioONU from "./pages/OficiosONU/OficioONU";
 import Transferencias from "./pages/Trasnsferencias/Transferencias";
+import Capital from "./pages/polizas/Capital";
+import Corriente from "./pages/polizas/Corriente";
 
 function App() {
   return (
@@ -37,6 +39,13 @@ function App() {
             <Route
               path="presupuesto"
               element={<OficioPresupuesto tipo={"CONS"} />}
+            />
+
+            <Route path="gasto-capital" element={<Capital tipo={"CONS"} />} />
+
+            <Route
+              path="gasto-corriente"
+              element={<Corriente tipo={"CONS"} />}
             />
           </Route>
         </Routes>
