@@ -42,11 +42,12 @@ function App() {
             />
 
             <Route path="gasto-capital" element={<Capital tipo={"CONS"} />} />
-
             <Route
               path="gasto-corriente"
               element={<Corriente tipo={"CONS"} />}
             />
+
+            <Route path="SP" element={<Corriente tipo={"CONS"} />} />
           </Route>
         </Routes>
       </HashRouter>

@@ -182,6 +182,29 @@ const Main = () => {
 
             <Tooltip title={"Solicitudes de Pago"}>
               <ListItemButton
+                onClick={() => {
+                  setSelectedOption("SP");
+                  navigate("/home/SP");
+                }}
+                style={{
+                  backgroundColor:
+                    selectedOption === "SP" ? "#DBA901" : "transparent",
+                }}
+              >
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Solicitudes de Pago"
+                  style={{
+                    color: selectedOption === "SP" ? "#FFFFFF" : "",
+                  }}
+                />
+              </ListItemButton>
+            </Tooltip>
+
+            {/* <Tooltip title={"Solicitudes de Pago"}>
+              <ListItemButton
                 onClick={handleClick} // Alterna el estado abierto/cerrado
               >
                 <ListItemIcon>
@@ -190,9 +213,9 @@ const Main = () => {
                 <ListItemText primary="Solicitudes de Pago" />
                 {openMenus ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
-            </Tooltip>
+            </Tooltip> */}
 
-            <Collapse in={openMenus} timeout="auto" unmountOnExit>
+            {/* <Collapse in={openMenus} timeout="auto" unmountOnExit>
               <ListItemButton
                 onClick={() => {
                   setSelectedOption("gasto-corriente");
@@ -233,7 +256,7 @@ const Main = () => {
                   }}
                 />
               </ListItemButton>
-            </Collapse>
+            </Collapse> */}
 
             <Tooltip
               title={

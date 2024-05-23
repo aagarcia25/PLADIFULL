@@ -615,11 +615,11 @@ app.post("/gastocorriente", (req, res) => {
 
   if (TIPO == 4) {
     sql = `
-     SELECT * FROM polizas WHERE Texto LIKE '%GASTO CORRIENTE%';
+     SELECT * FROM polizas ';
    `;
   } else if (TIPO == 5 && BUSQUEDA !== "") {
     sql = `
-     SELECT * FROM polizas WHERE Texto LIKE '%GASTO CORRIENTE%';
+     SELECT * FROM polizas';
    `;
     params.$parametro_busqueda = BUSQUEDA;
   }
