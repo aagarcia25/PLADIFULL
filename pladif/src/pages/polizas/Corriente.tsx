@@ -28,7 +28,7 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     };
 
     axios
-      .post("http://localhost:3001/getFileByRoute", data)
+      .post("http://10.200.4.176:3001/getFileByRoute", data)
       .then((response) => {
         console.log(response.data);
         // Manejar la respuesta del servidor
