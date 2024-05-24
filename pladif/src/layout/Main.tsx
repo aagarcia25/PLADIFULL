@@ -314,7 +314,7 @@ const Main = () => {
               </ListItemButton>
             </Tooltip>
 
-            <Tooltip title={"Transferencias Presupuestales"}>
+            <Tooltip title={"Transferencias Y Recalendarizaciones"}>
               <ListItemButton
                 onClick={() => {
                   setSelectedOption("trasnsferencias");
@@ -331,7 +331,7 @@ const Main = () => {
                   <ArticleIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Transferencias Presupuestales"
+                  primary="Transferencias Y Recalendarizaciones"
                   style={{
                     color:
                       selectedOption === "trasnsferencias" ? "#FFFFFF" : "",

@@ -360,7 +360,7 @@ const Busqueda = () => {
             noWrap
             sx={{ flexGrow: 1, textAlign: "center" }}
           >
-            TRANSFERENCIAS
+            Transferencias Y Recalendarizaciones
           </Typography>
           <Transferencias tipo={"BUS"} Busqueda={busqueda}></Transferencias>
         </Grid>
