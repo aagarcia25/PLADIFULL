@@ -66,7 +66,7 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       headerName: "Acciones",
       description: "Campo de Acciones",
       sortable: false,
-      width: 100,
+      width: 80,
       renderCell: (v) => {
         return (
           <>
@@ -85,7 +85,7 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       field: "SP",
       headerName: "Solicitud de Pago",
       description: "Solicitud de Pago",
-      width: 150,
+      width: 110,
     },
     {
       field: "Texto",
