@@ -44,7 +44,12 @@ const Transferencias = ({
       field: "id",
       hideable: false,
     },
-
+    {
+      field: "Anio",
+      headerName: "Ejercicio",
+      description: "Ejercicio",
+      width: 100,
+    },
     {
       field: "Folio",
       disableExport: true,
@@ -254,12 +259,6 @@ const Transferencias = ({
       headerName: " Obs. Terminada",
       description: " Obs. Terminada",
       width: 350,
-    },
-    {
-      field: "Anio",
-      headerName: "Ejercicio",
-      description: "Ejercicio",
-      width: 100,
     },
   ];
 
