@@ -98,11 +98,11 @@ const Auditoria = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       description: "FechaOficio",
       width: 100,
     },
-    {
-      field: "Folio",
-      headerName: "Folio",
-      width: 100,
-    },
+    // {
+    //   field: "Folio",
+    //   headerName: "Folio",
+    //   width: 100,
+    // },
     {
       field: "OficioDependencia",
       headerName: "Oficio de la Dependencia",
@@ -147,18 +147,18 @@ const Auditoria = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       description: "Fecha de Recepcion",
       width: 100,
     },
-    {
-      field: "FechaElaboracion",
-      headerName: "Fecha de Elaboracion",
-      description: "Fecha de Elaboracion",
-      width: 100,
-    },
-    {
-      field: "FechaVencimiento",
-      headerName: "Fecha de Vencimiento",
-      description: "Fecha de Vencimiento",
-      width: 100,
-    },
+    // {
+    //   field: "FechaElaboracion",
+    //   headerName: "Fecha de Elaboracion",
+    //   description: "Fecha de Elaboracion",
+    //   width: 100,
+    // },
+    // {
+    //   field: "FechaVencimiento",
+    //   headerName: "Fecha de Vencimiento",
+    //   description: "Fecha de Vencimiento",
+    //   width: 100,
+    // },
     {
       field: "Monto",
       headerName: "Monto",
@@ -171,30 +171,30 @@ const Auditoria = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       description: "Comentarios",
       width: 750,
     },
-    {
-      field: "FechaTurno",
-      headerName: "Fecha en que se Turno",
-      description: "Fecha en que se Turno",
-      width: 100,
-    },
-    {
-      field: "ObservacionesEstatus",
-      headerName: "Observaciones del Estatus",
-      description: "Observaciones del Estatus",
-      width: 500,
-    },
-    {
-      field: "NumOficioContestacion",
-      headerName: "Num. De Oficio de Contestacion",
-      description: "Num. De Oficio de Contestacion",
-      width: 250,
-    },
-    {
-      field: "FechaTurnada",
-      headerName: "Fecha Turnada",
-      description: "Fecha Turnada",
-      width: 100,
-    },
+    // {
+    //   field: "FechaTurno",
+    //   headerName: "Fecha en que se Turno",
+    //   description: "Fecha en que se Turno",
+    //   width: 100,
+    // },
+    //{
+    //   field: "ObservacionesEstatus",
+    //   headerName: "Observaciones del Estatus",
+    //   description: "Observaciones del Estatus",
+    //   width: 500,
+    // },
+    // {
+    //   field: "NumOficioContestacion",
+    //   headerName: "Num. De Oficio de Contestacion",
+    //   description: "Num. De Oficio de Contestacion",
+    //   width: 250,
+    // },
+    // {
+    //   field: "FechaTurnada",
+    //   headerName: "Fecha Turnada",
+    //   description: "Fecha Turnada",
+    //   width: 100,
+    // },
     {
       field: "FechaTerminada",
       headerName: "Fecha Terminada",
