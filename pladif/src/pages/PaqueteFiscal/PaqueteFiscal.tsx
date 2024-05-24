@@ -96,8 +96,6 @@ const PaqueteFiscal = ({
     axios
       .post("http://10.200.4.176:3001/PF", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setrows(response.data.datos);

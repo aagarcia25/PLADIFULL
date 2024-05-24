@@ -91,7 +91,6 @@ const SIREGOB = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   const handleVerSub = (v: any) => {
-    console.log(v);
     setidowner(v.row.Id);
     setopenModalFiles(true);
   };
