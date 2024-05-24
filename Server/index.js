@@ -8,7 +8,7 @@ const cors = require("cors");
 const fs = require("fs");
 const multer = require("multer");
 
-const ruta = "C:\\PLADI";
+const ruta = "D:\\PLADI";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
