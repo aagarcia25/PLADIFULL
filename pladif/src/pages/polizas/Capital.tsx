@@ -20,8 +20,6 @@ const Capital = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   const handleVer = (v: any) => {
-    console.log(v);
-
     let data = {
       NUMOPERACION: 5,
       P_ROUTE: v.row.Archivo.replace("\\\\", "\\"),
@@ -30,7 +28,6 @@ const Capital = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     axios
       .post("http://10.200.4.176:3001/getFileByRoute", data)
       .then((response) => {
-        console.log(response.data);
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           var bufferArray = base64ToArrayBuffer(
@@ -109,8 +106,6 @@ const Capital = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     axios
       .post("http://localhost:3001/gastocapital", data)
       .then((response) => {
-        console.log(response.data);
-
         if (response.status == 200) {
           setrows(response.data.datos);
           setopen(false);
@@ -131,8 +126,6 @@ const Capital = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   useEffect(() => {
-    console.log(tipo);
-    console.log(Busqueda);
     if (tipo == "CONS") {
       ProcesaData(4);
     } else if (tipo == "BUS" && Busqueda != "") {

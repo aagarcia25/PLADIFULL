@@ -19,22 +19,17 @@ const Auditoria = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   const handleVerSub = (v: any) => {
-    console.log(v);
     const [dia, mes, anio] = v.row.FechaOficio.split("/");
     const fecha = new Date(`${anio}-${mes}-${dia}`);
     const anioObtenido = fecha.getFullYear();
-    console.log(anioObtenido);
     setidowner("\\AUDITORIA\\FOLIOS\\" + anioObtenido + "\\" + v.row.Folio);
-    //setidowner("/AUDITORIA/FOLIOS/" + anioObtenido + "/" + v.row.Folio);
     setopenModalFiles(true);
   };
 
   const handleVerSub2 = (v: any) => {
-    console.log(v);
     const [dia, mes, anio] = v.row.FechaOficio.split("/");
     const fecha = new Date(`${anio}-${mes}-${dia}`);
     const anioObtenido = fecha.getFullYear();
-    console.log(anioObtenido);
     setidowner(
       "\\AUDITORIA\\CONTESTACION\\" +
         anioObtenido +
@@ -42,12 +37,6 @@ const Auditoria = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
         v.row.NumOficioContestacion
     );
 
-    //  setidowner(
-    //    "/AUDITORIA/CONTESTACION/" +
-    //      anioObtenido +
-    //      "/" +
-    //      v.row.NumOficioContestacion
-    //  );
     setopenModalFiles(true);
   };
 
@@ -237,8 +226,6 @@ const Auditoria = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     axios
       .post("http://10.200.4.176:3001/AUDITORIA", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setrows(response.data.datos);
@@ -260,8 +247,6 @@ const Auditoria = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   useEffect(() => {
-    console.log(tipo);
-    console.log(Busqueda);
     if (tipo == "CONS") {
       ProcesaData(4);
     } else if (tipo == "BUS" && Busqueda != "") {

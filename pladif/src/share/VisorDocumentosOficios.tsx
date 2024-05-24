@@ -27,7 +27,6 @@ const VisorDocumentosOficios = ({
   const [openSlider, setOpenSlider] = useState(false);
   const [opendialog, setopendialog] = useState(false);
   const [verarchivo, setverarchivo] = useState(false);
-  // const permiso = JSON.parse(String(getItem("Tipo"))) as any;
   const [data, setData] = useState([]);
   const [URLruta, setURLRuta] = useState<string>("");
   const [breadcrumbs, setBreadcrumbs] = useState([obj]);
@@ -43,8 +42,6 @@ const VisorDocumentosOficios = ({
       axios
         .post("http://10.200.4.176:3001/getListFiles", data)
         .then((response) => {
-          console.log(response.data);
-
           // Manejar la respuesta del servidor
           if (response.status == 200) {
             setData(response.data.RESPONSE);
@@ -76,8 +73,6 @@ const VisorDocumentosOficios = ({
     axios
       .post("http://10.200.4.176:3001/getFile", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setOpenSlider(false);
@@ -112,8 +107,6 @@ const VisorDocumentosOficios = ({
   };
 
   const createFolder = (v: any) => {
-    console.log(v);
-
     if (v !== undefined && v != "") {
       const formData = new FormData();
       formData.append("NUMOPERACION", "9");
@@ -130,7 +123,6 @@ const VisorDocumentosOficios = ({
         })
         .then((response) => {
           if (response.data.SUCCESS) {
-            console.log(response.data);
             consulta();
             setopendialog(false);
           } else {
@@ -150,7 +142,6 @@ const VisorDocumentosOficios = ({
   };
 
   const handleVer = (v: any) => {
-    console.log(v);
     setOpenSlider(true);
     let data = {
       NUMOPERACION: 5,
@@ -161,7 +152,6 @@ const VisorDocumentosOficios = ({
     axios
       .post("http://10.200.4.176:3001/getFile", data)
       .then((response) => {
-        console.log(response.data);
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setOpenSlider(false);
@@ -192,8 +182,6 @@ const VisorDocumentosOficios = ({
   };
 
   const handleAccion = (v: any) => {
-    console.log(v);
-
     Swal.fire({
       icon: "info",
       title: "¿Estás seguro de eliminar este registro?",
@@ -213,7 +201,6 @@ const VisorDocumentosOficios = ({
           axios
             .post("http://10.200.4.176:3001/deletedFile", data)
             .then((response) => {
-              console.log(response.data);
               if (response.status == 200) {
                 setData(response.data.RESPONSE);
                 setOpenSlider(false);
@@ -330,14 +317,12 @@ const VisorDocumentosOficios = ({
   ];
 
   const handleVerSub = (v: any) => {
-    console.log(v);
     const existeOficio = breadcrumbs.some((breadcrumb) => {
       // Verificar si el nombre del breadcrumb es "Oficio"
       return breadcrumb === "/" + v.row.name;
     });
 
     if (existeOficio) {
-      console.log("YA Existe el Elemento");
     } else {
       const nuevoElemento = "/" + v.row.name;
       setBreadcrumbs((prevBreadcrumbs) => [...prevBreadcrumbs, nuevoElemento]);
@@ -375,7 +360,6 @@ const VisorDocumentosOficios = ({
 
     axios.all(peticiones).then((resposeArr) => {
       resposeArr.map((item) => {
-        console.log(item);
         if (item.data.SUCCESS) {
           count++;
         } else {

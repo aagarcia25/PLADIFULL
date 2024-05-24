@@ -34,7 +34,6 @@ const Busqueda = () => {
     setopenModalFiles(false);
   };
   const handleVerSub = (v: any) => {
-    console.log(v);
     setidowner(v.row.idorigen);
     setopenModalFiles(true);
   };
@@ -48,8 +47,6 @@ const Busqueda = () => {
     axios
       .post("http://10.200.4.176:3001/inapGralAll", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setData(response.data.datos);
@@ -74,52 +71,15 @@ const Busqueda = () => {
       P_ROUTE: explorerRoute,
       P_NOMBRE: v.row.name,
     };
-    /*
-    AuthService.getFile(data).then((res) => {
-      if (res.SUCCESS) {
-        var bufferArray = base64ToArrayBuffer(String(res.RESPONSE.FILE));
-        var blobStore = new Blob([bufferArray], { type: res.RESPONSE.TIPO });
-        var data = window.URL.createObjectURL(blobStore);
-        var link = document.createElement("a");
-        document.body.appendChild(link);
-        link.href = data;
-        link.download = v.row.name;
-        link.click();
-        window.URL.revokeObjectURL(data);
-        link.remove();
-        setOpenSlider(false);
-      } else {
-        setOpenSlider(false);
-        Swal.fire("¡Error!", res.STRMESSAGE, "error");
-      }
-    });*/
   };
 
   const handleVer = (v: any) => {
-    console.log(v);
     setOpenSlider(true);
     let data = {
       NUMOPERACION: 5,
       P_ROUTE: v.row.path,
       P_TIPO: v.row.type,
     };
-    /*
-    AuthService.getFileBusqueda(data).then((res) => {
-      if (res.SUCCESS) {
-        var bufferArray = base64ToArrayBuffer(String(res.RESPONSE.FILE));
-        var blobStore = new Blob([bufferArray], { type: "application/pdf" });
-        var data = window.URL.createObjectURL(blobStore);
-        var link = document.createElement("a");
-        document.body.appendChild(link);
-        link.href = data;
-        setURLRuta(link.href);
-        setOpenSlider(false);
-        setverarchivo(true);
-      } else {
-        setOpenSlider(false);
-        Swal.fire("¡Error!", res.STRMESSAGE, "error");
-      }
-    });*/
   };
 
   const columnsinap: GridColDef[] = [
@@ -255,9 +215,7 @@ const Busqueda = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(searchTerm);
-  }, [reload]); // Observa cambios en searchTerm
+  useEffect(() => {}, [reload]); // Observa cambios en searchTerm
 
   return (
     <div>

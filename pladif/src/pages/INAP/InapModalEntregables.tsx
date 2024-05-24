@@ -33,13 +33,11 @@ export default function InapModalEntregables({
 
   const [convenio, setconvenio] = useState<string>();
 
-  // const user = JSON.parse(String(getItem("User"))) as any;
   const handledatestar = (v: any) => {
     setfstart(v);
   };
 
   const inserta = () => {
-    console.log(obj);
     let data = {
       TIPO: 1,
       P_IdGral01: obj.Id,
@@ -47,20 +45,6 @@ export default function InapModalEntregables({
       P_FechaEntregable: fstart,
       P_Nombre: convenio,
     };
-
-    // AuthService.inapGral0101All(data).then((res) => {
-    //   if (res.NUMCODE == 200) {
-    //     MsgAlert(
-    //       "Información",
-    //       "Registro Agregado con correctamente",
-    //       "success"
-    //     );
-    //     setfstart(null);
-    //     setconvenio("");
-    //   } else {
-    //     MsgAlert("Error", res.STRMESSAGE, "error");
-    //   }
-    // });
   };
 
   return (

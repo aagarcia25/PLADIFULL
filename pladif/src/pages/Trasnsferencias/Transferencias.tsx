@@ -274,8 +274,6 @@ const Transferencias = ({
     axios
       .post("http://10.200.4.176:3001/transferencias", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setrows(response.data.datos);
@@ -297,8 +295,6 @@ const Transferencias = ({
   };
 
   useEffect(() => {
-    console.log(tipo);
-    console.log(Busqueda);
     if (tipo == "CONS") {
       ProcesaData(4);
     } else if (tipo == "BUS" && Busqueda != "") {

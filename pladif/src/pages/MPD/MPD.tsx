@@ -68,8 +68,6 @@ const MPD = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     axios
       .post("http://10.200.4.176:3001/MPD", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setrows(response.data.datos);
@@ -89,25 +87,9 @@ const MPD = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
         setopen(false);
         // Manejar el error
       });
-
-    /*
-    AuthService.MPD(data).then((res) => {
-      if (res.NUMCODE == 200) {
-        if (tipo == 4) {
-          setrows(res.RESPONSE);
-          setopen(false);
-        } else if (tipo == 5) {
-          setrows(res.RESPONSE);
-          setopen(false);
-        }
-      } else {
-        MsgAlert("Error", res.STRMESSAGE, "error");
-      }
-    });*/
   };
 
   useEffect(() => {
-    console.log(tipo);
     if (tipo == "CONS") {
       ProcesaData(4);
     } else if (tipo == "BUS" && Busqueda != "") {

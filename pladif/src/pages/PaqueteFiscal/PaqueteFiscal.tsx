@@ -117,26 +117,9 @@ const PaqueteFiscal = ({
         setopen(false);
         // Manejar el error
       });
-
-    /*
-    AuthService.PF(data).then((res) => {
-      if (res.NUMCODE == 200) {
-        if (tipo == 4) {
-          setrows(res.RESPONSE);
-          setopen(false);
-        } else if (tipo == 5) {
-          setrows(res.RESPONSE);
-          setopen(false);
-        }
-      } else {
-        MsgAlert("Error", res.STRMESSAGE, "error");
-      }
-    });*/
   };
 
   useEffect(() => {
-    console.log(tipo);
-    console.log(Busqueda);
     if (tipo == "CONS") {
       ProcesaData(4);
     } else if (tipo == "BUS" && Busqueda != "") {

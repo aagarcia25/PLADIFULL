@@ -28,7 +28,6 @@ const SignIn = () => {
         pass,
       })
       .then((response) => {
-        console.log(response.data);
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           navigate("/home/");

@@ -71,7 +71,6 @@ const Inap = () => {
 
       if (selectedFile) {
         // Aquí puedes realizar acciones con el archivo seleccionado
-        console.log("Archivo seleccionado:", selectedFile.name);
         const formData = new FormData();
         formData.append("file", selectedFile);
         formData.append("P_TIPO", tipoCarga.toString());
@@ -81,11 +80,8 @@ const Inap = () => {
           "http://10.200.4.176:3001/" + "/migradata",
           formData
         );
-        console.log("respuesta de archivo");
-        console.log(response);
         if (response.data.success) {
           setopen(false);
-          console.log("Archivo migrado con éxito");
           window.location.reload();
         } else {
           setopen(false);
@@ -110,8 +106,6 @@ const Inap = () => {
     axios
       .post("http://10.200.4.176:3001/inapGral01All", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setdataConvenio(response.data.datos);
@@ -145,8 +139,6 @@ const Inap = () => {
     axios
       .post("http://10.200.4.176:3001/inapGralAll", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setData(response.data.datos);
@@ -282,9 +274,7 @@ const Inap = () => {
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setSearchTerm(value);
-    const searchTimeout = setTimeout(() => {
-      console.log("Búsqueda realizada:", value);
-    }, 2000); // Ajusta el tiempo de espera según tus necesidades
+    const searchTimeout = setTimeout(() => {}, 2000); // Ajusta el tiempo de espera según tus necesidades
   };
 
   useEffect(() => {

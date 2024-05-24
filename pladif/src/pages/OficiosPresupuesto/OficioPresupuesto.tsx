@@ -137,8 +137,6 @@ const OficioPresupuesto = ({
     axios
       .post("http://10.200.4.176:3001/presupuesto", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setrows(response.data.datos);
@@ -158,26 +156,9 @@ const OficioPresupuesto = ({
         setopen(false);
         // Manejar el error
       });
-
-    /*
-    AuthService.presupuesto(data).then((res) => {
-      if (res.NUMCODE == 200) {
-        if (tipo == 4) {
-          setrows(res.RESPONSE);
-          setopen(false);
-        } else if (tipo == 5) {
-          setrows(res.RESPONSE);
-          setopen(false);
-        }
-      } else {
-        MsgAlert("Error", res.STRMESSAGE, "error");
-      }
-    });*/
   };
 
   useEffect(() => {
-    console.log(tipo);
-    console.log(Busqueda);
     if (tipo == "CONS") {
       ProcesaData(4);
     } else if (tipo == "BUS" && Busqueda != "") {

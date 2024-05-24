@@ -23,25 +23,21 @@ const OficioONU = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   const handleVerSub = (v: any) => {
-    console.log(v);
     setidowner("\\ONU\\" + v.row.Id + "\\DOCUMENTOS\\");
     setopenModalFiles(true);
   };
 
   const handleEntregables = (v: any) => {
-    console.log(v);
     setidowner("\\ONU\\" + v.row.Id + "\\ENTREGABLES\\");
     setopenModalFiles(true);
   };
 
   const handleActas = (v: any) => {
-    console.log(v);
     setidowner("\\ONU\\" + v.row.Id + "\\ACTAS\\");
     setopenModalFiles(true);
   };
 
   const handleFacturas = (v: any) => {
-    console.log(v);
     setidowner("\\ONU\\" + v.row.Id + "\\FACTURAS\\");
     setopenModalFiles(true);
   };
@@ -116,8 +112,6 @@ const OficioONU = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     axios
       .post("http://10.200.4.176:3001/onu", data)
       .then((response) => {
-        console.log(response.data);
-
         // Manejar la respuesta del servidor
         if (response.status == 200) {
           setrows(response.data.datos);
@@ -139,8 +133,6 @@ const OficioONU = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   useEffect(() => {
-    console.log(tipo);
-    console.log(Busqueda);
     if (tipo == "CONS") {
       ProcesaData(4);
     } else if (tipo == "BUS" && Busqueda != "") {
