@@ -20,6 +20,7 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   const handleVer = (v: any) => {
+    console.log(v);
     let data = {
       NUMOPERACION: 5,
       P_ROUTE: v.row.Archivo.replace("\\\\", "\\"),
