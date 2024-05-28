@@ -7,14 +7,17 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
 const multer = require("multer");
+const xlsx = require("xlsx");
 const ruta = "D:\\PLADI";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+const { parse, format } = require("date-fns");
 dotenv.config();
 const app = express();
 const PORT = 3001;
 const HOST = "0.0.0.0";
 const uil = require("../Server/responseBuilder.js");
+const db_connect = require("./db"); // Importa la configuración de la base de datos
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -841,6 +844,80 @@ app.post("/getFileByRoute", async (req, res) => {
   } catch (error) {
     const responseData = uil.buildResponse(null, false, 500, error.message);
     res.status(500).json(responseData);
+  }
+});
+
+function insertDataIntoDatabase(data) {
+  return new Promise((resolve, reject) => {
+    const insertQuery = `
+      INSERT INTO transferencias ( Anio, Folio, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, TipoSolicitud, FechaOficio, FechaRecepcion, Monto, Comentarios, AsignadoDependencia, TramitadoDAMOP, FechaCapturada, ObservacionesCapturada, ObservacionesTurnada, FechaStanBy, ObservacionesStandBy, FechaTerminada, ObservacionesTerminada)
+      VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    for (const row of data) {
+      const values = [
+        row.ANIO,
+        row.Folio,
+        row.OficioDependencia,
+        row.Secretaria,
+        row.Dependencia,
+        row.TipoGasto,
+        row.Estatus,
+        row.Responsable,
+        row.TipoSolicitud,
+        row.FechaOficio
+          ? format(uil.excelDateToJSDate(row.FechaOficio), "yyyy-MM-dd")
+          : null,
+        row.FechaRecepcion
+          ? format(uil.excelDateToJSDate(row.FechaRecepcion), "yyyy-MM-dd")
+          : null,
+        row.Monto,
+        row.Comentarios,
+        row.AsignadoDependencia,
+        row.TramitadoDAMOP,
+        row.FechaCapturada
+          ? format(uil.excelDateToJSDate(row.FechaCapturada), "yyyy-MM-dd")
+          : null,
+        row.ObservacionesCapturada,
+        row.ObservacionesTurnada,
+        row.FechaStanBy
+          ? format(uil.excelDateToJSDate(row.FechaStanBy), "yyyy-MM-dd")
+          : null,
+        row.ObservacionesStandBy,
+        row.FechaTerminada
+          ? format(uil.excelDateToJSDate(row.FechaTerminada), "yyyy-MM-dd")
+          : null,
+        row.ObservacionesTerminada,
+      ];
+
+      db_connect.query(insertQuery, values, (err) => {
+        if (err) {
+          return reject(err);
+        }
+      });
+    }
+    resolve();
+  });
+}
+
+// Ruta para manejar la subida del archivo Excel
+app.post("/upload", upload.single("file"), async (req, res) => {
+  try {
+    // Obtener el buffer del archivo subido
+    const buffer = req.file.buffer;
+
+    // Leer el contenido del buffer usando xlsx
+    const workbook = xlsx.read(buffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const data = xlsx.utils.sheet_to_json(sheet);
+
+    await insertDataIntoDatabase(data);
+
+    res.status(200).json({ message: "Data inserted successfully" });
+  } catch (error) {
+    console.error("Error processing file:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
