@@ -224,7 +224,7 @@ const Auditoria = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/AUDITORIA", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "AUDITORIA", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {

@@ -66,7 +66,7 @@ const MPD = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       P_Id: id,
     };
     axios
-      .post("http://10.200.4.176:3001/MPD", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "MPD", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {

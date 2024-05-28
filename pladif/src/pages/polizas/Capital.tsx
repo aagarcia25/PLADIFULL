@@ -26,7 +26,7 @@ const Capital = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/getFileByRoute", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "getFileByRoute", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {
@@ -104,7 +104,7 @@ const Capital = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     };
 
     axios
-      .post("http://localhost:3001/gastocapital", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "gastocapital", data)
       .then((response) => {
         if (response.status == 200) {
           setrows(response.data.datos);

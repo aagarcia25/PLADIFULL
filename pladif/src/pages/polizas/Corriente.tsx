@@ -20,14 +20,13 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   };
 
   const handleVer = (v: any) => {
-    console.log(v);
     let data = {
       NUMOPERACION: 5,
       P_ROUTE: v.row.Archivo.replace("\\\\", "\\"),
     };
 
     axios
-      .post("http://10.200.4.176:3001/getFileByRoute", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "getFileByRoute", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {
@@ -105,7 +104,7 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     };
 
     axios
-      .post("http://localhost:3001/gastocorriente", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "gastocorriente", data)
       .then((response) => {
         if (response.status == 200) {
           setrows(response.data.datos);

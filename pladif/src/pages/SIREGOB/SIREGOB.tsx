@@ -108,7 +108,7 @@ const SIREGOB = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/siregob", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "siregob", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {

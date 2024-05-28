@@ -40,7 +40,7 @@ const VisorDocumentosOficios = ({
       };
 
       axios
-        .post("http://10.200.4.176:3001/getListFiles", data)
+        .post(process.env.REACT_APP_APPLICATION_BASE_URL + "getListFiles", data)
         .then((response) => {
           // Manejar la respuesta del servidor
           if (response.status == 200) {
@@ -71,7 +71,7 @@ const VisorDocumentosOficios = ({
     };
 
     axios
-      .post("http://10.200.4.176:3001/getFile", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "getFile", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {
@@ -114,13 +114,17 @@ const VisorDocumentosOficios = ({
       formData.append("P_ROUTE", explorerRoute + "/" + v);
 
       axios
-        .post("http://10.200.4.176:3001/" + "createfolder", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            "X-Requested-With": "XMLHttpRequest",
-            "Access-Control-Allow-Origin": "*",
-          },
-        })
+        .post(
+          process.env.REACT_APP_APPLICATION_BASE_URL + "createfolder",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              "X-Requested-With": "XMLHttpRequest",
+              "Access-Control-Allow-Origin": "*",
+            },
+          }
+        )
         .then((response) => {
           if (response.data.SUCCESS) {
             consulta();
@@ -150,7 +154,7 @@ const VisorDocumentosOficios = ({
     };
 
     axios
-      .post("http://10.200.4.176:3001/getFile", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "getFile", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {
@@ -199,7 +203,10 @@ const VisorDocumentosOficios = ({
           };
 
           axios
-            .post("http://10.200.4.176:3001/deletedFile", data)
+            .post(
+              process.env.REACT_APP_APPLICATION_BASE_URL + "deletedFile",
+              data
+            )
             .then((response) => {
               if (response.status == 200) {
                 setData(response.data.RESPONSE);
@@ -223,9 +230,11 @@ const VisorDocumentosOficios = ({
             P_ROUTE: explorerRoute,
           };
           axios
-            .post("http://10.200.4.176:3001/deletedFolder", data)
+            .post(
+              process.env.REACT_APP_APPLICATION_BASE_URL + "deletedFolder",
+              data
+            )
             .then((response) => {
-              console.log(response.data);
               if (response.status == 200) {
                 setData(response.data.RESPONSE);
                 setOpenSlider(false);
@@ -348,13 +357,17 @@ const VisorDocumentosOficios = ({
       formData.append("file", item.Archivo, item.NOMBRE);
       formData.append("nombreArchivo", item.NOMBRE);
 
-      let p = axios.post("http://10.200.4.176:3001/saveFile", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "X-Requested-With": "XMLHttpRequest",
-          "Access-Control-Allow-Origin": "*",
-        },
-      });
+      let p = axios.post(
+        process.env.REACT_APP_APPLICATION_BASE_URL + "saveFile",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-Requested-With": "XMLHttpRequest",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
       peticiones.push(p);
     });
 

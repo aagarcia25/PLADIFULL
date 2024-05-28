@@ -21,12 +21,10 @@ import Transferencias from "../Trasnsferencias/Transferencias";
 const Busqueda = () => {
   const [idowner, setidowner] = useState<string>("");
   const [openModalFiles, setopenModalFiles] = useState(false);
-  const [URLruta, setURLRuta] = useState<string>("");
   const [openSlider, setOpenSlider] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [busqueda, setBusqueda] = useState<string>("");
   const [explorerRoute, setexplorerRoute] = useState<string>("");
-  const [verarchivo, setverarchivo] = useState(false);
   const [data, setData] = useState([]);
   const [reload, setReload] = useState(false);
 
@@ -45,7 +43,7 @@ const Busqueda = () => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/inapGralAll", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "inapGralAll", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {

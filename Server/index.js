@@ -1,68 +1,25 @@
+const dotenv = require("dotenv");
 const express = require("express");
 const fs2 = require("fs").promises;
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const bodyParser = require("body-parser");
-const sqlite3 = require("sqlite3").verbose();
 const cors = require("cors");
 const fs = require("fs");
 const multer = require("multer");
-
 const ruta = "D:\\PLADI";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
+dotenv.config();
 const app = express();
-const port = 3001;
+const PORT = 3001;
+const HOST = "0.0.0.0";
+const uil = require("../Server/responseBuilder.js");
 
-const buildResponse = (response, success, numCode, strMessage) => ({
-  RESPONSE: response,
-  SUCCESS: success,
-  NUMCODE: numCode,
-  STRMESSAGE: strMessage,
-});
-
-const db = new sqlite3.Database("database/database.db");
 app.use(bodyParser.json());
 app.use(cors());
 
-const schema = fs.readFileSync("database/schema.sql", "utf8");
-
-db.exec(schema, function (err) {
-  if (err) {
-    console.error("Error al ejecutar el esquema SQL:", err.message);
-    return;
-  }
-  console.log("Esquema SQL ejecutado con éxito");
-
-  db.serialize(() => {
-    db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, rows) => {
-      if (err) {
-        console.error("Error al consultar la tabla sqlite_master:", err);
-        return;
-      }
-      console.log(
-        "Tablas en la base de datos:",
-        rows.map((row) => row.name)
-      );
-    });
-  });
-
-  db.serialize(() => {
-    db.all("SELECT * FROM usuarios", (err, rows) => {
-      if (err) {
-        console.error("Error al consultar la tabla usuarios:", err);
-        return;
-      }
-      console.log("Información de la tabla usuarios:");
-      rows.forEach((row) => {
-        console.log(row);
-      });
-    });
-  });
-});
-
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const { username, pass } = req.body;
 
   if (!username || !pass) {
@@ -70,81 +27,80 @@ app.post("/login", (req, res) => {
   }
 
   const sql = `SELECT *
-     FROM usuarios
-     WHERE NombreUsuario = ? AND Contrasena = ? AND Deleted = 0`;
-  db.get(sql, [username, pass], (err, row) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (row) {
-      res.status(200).json({ message: "Login successful", user: row });
+               FROM usuarios
+               WHERE NombreUsuario = ? AND Contrasena = ? AND Deleted = 0`;
+
+  try {
+    const result = await uil.executeQuery(sql, [username, pass]);
+
+    if (result.length > 0) {
+      res.status(200).json({ message: "Login successful", user: result[0] });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
     }
-  });
+  } catch (error) {
+    console.error("Error executing query:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-app.post("/siregob", (req, res) => {
+app.post("/siregob", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
 
-  if (TIPO == 4) {
-    sql = ` SELECT
-        Id,
-        Deleted,
-        UltimaActualizacion,
-        FechaCreacion,
-        ModificadoPor,
-        CreadoPor,
-        idContrato,
-        NombreContrato,
-        FechaContrato,
-        pdfContrato,
-        ObjetivoContrato,
-        MontoContrato,
-        PropuestaTecnica,
-        PropuestaEconomica
-       FROM siregob_01`;
-  } else if (TIPO == 5 && BUSQUEDA !== "") {
-    sql = `SELECT 
-        Id,
-        Deleted,
-        UltimaActualizacion,
-        FechaCreacion,
-        ModificadoPor,
-        CreadoPor,
-        idContrato,
-        NombreContrato,
-        strftime('%d/%m/%Y', FechaContrato) AS FechaContrato,
-        pdfContrato,
-        ObjetivoContrato,
-        MontoContrato,
-        PropuestaTecnica,
-        PropuestaEconomica
-      FROM 
-        siregob_01
-      WHERE
-        UPPER(NombreContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
-        OR UPPER(strftime('%d/%m/%Y', FechaContrato)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-        OR UPPER(pdfContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
-        OR UPPER(ObjetivoContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
-        OR UPPER(MontoContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      ORDER BY 
-        strftime('%Y', FechaContrato) DESC`;
+  try {
+    if (TIPO == 4) {
+      sql = `SELECT
+                Id,
+                Deleted,
+                UltimaActualizacion,
+                FechaCreacion,
+                ModificadoPor,
+                CreadoPor,
+                idContrato,
+                NombreContrato,
+                FechaContrato,
+                pdfContrato,
+                ObjetivoContrato,
+                MontoContrato,
+                PropuestaTecnica,
+                PropuestaEconomica
+             FROM siregob_01`;
+    } else if (TIPO == 5 && BUSQUEDA !== "") {
+      sql = `SELECT 
+                Id,
+                Deleted,
+                UltimaActualizacion,
+                FechaCreacion,
+                ModificadoPor,
+                CreadoPor,
+                idContrato,
+                NombreContrato,
+                ( FechaContrato) AS FechaContrato,
+                pdfContrato,
+                ObjetivoContrato,
+                MontoContrato,
+                PropuestaTecnica,
+                PropuestaEconomica
+             FROM siregob_01
+             WHERE
+                UPPER(NombreContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
+                OR UPPER(( FechaContrato)) LIKE '%' || UPPER($parametro_busqueda) || '%'
+                OR UPPER(pdfContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
+                OR UPPER(ObjetivoContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
+                OR UPPER(MontoContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
+             ORDER BY 
+                strftime('%Y', FechaContrato) DESC`;
 
-    // Define el parámetro de búsqueda
-    params.$parametro_busqueda = BUSQUEDA;
-  }
-
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
+      // Define el parámetro de búsqueda
+      params.$parametro_busqueda = BUSQUEDA;
+    } else {
+      return res.status(400).json({ error: "Invalid request parameters" });
     }
+
+    const rows = await uil.executeQuery(sql, params);
+
     if (rows.length > 0) {
       res
         .status(200)
@@ -154,16 +110,20 @@ app.post("/siregob", (req, res) => {
         .status(200)
         .json({ message: "Data retrieved successfully", datos: [] });
     }
-  });
+  } catch (error) {
+    console.error("Error retrieving data:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-app.post("/AUDITORIA", (req, res) => {
-  const { TIPO, BUSQUEDA } = req.body;
-  let sql;
-  let params = {};
+app.post("/AUDITORIA", async (req, res) => {
+  try {
+    const { TIPO, BUSQUEDA } = req.body;
+    let sql;
+    let params = {};
 
-  if (TIPO == 4) {
-    sql = `
+    if (TIPO == 4) {
+      sql = `
      SELECT
        id,
        Folio,
@@ -173,23 +133,23 @@ app.post("/AUDITORIA", (req, res) => {
        TipoGasto,
        Responsable,
        TipoSolicitud,
-       strftime('%d/%m/%Y', FechaOficio) AS FechaOficio,
-       strftime('%d/%m/%Y', FechaRecepcion) AS FechaRecepcion,
-       strftime('%d/%m/%Y', FechaElaboracion) AS FechaElaboracion,
-       strftime('%d/%m/%Y', FechaVencimiento) AS FechaVencimiento,
-       printf('%.2f', Monto) AS Monto,
+       ( FechaOficio) AS FechaOficio,
+       ( FechaRecepcion) AS FechaRecepcion,
+       ( FechaElaboracion) AS FechaElaboracion,
+       ( FechaVencimiento) AS FechaVencimiento,
+       ( Monto) AS Monto,
        Comentarios,
-       strftime('%d/%m/%Y', FechaTurno) AS FechaTurno,
+       ( FechaTurno) AS FechaTurno,
        ObservacionesEstatus,
        NumOficioContestacion,
-       strftime('%d/%m/%Y', FechaTurnada) AS FechaTurnada,
-       strftime('%d/%m/%Y', FechaTerminada) AS FechaTerminada,
+       ( FechaTurnada) AS FechaTurnada,
+       ( FechaTerminada) AS FechaTerminada,
        ObsTerminada,
        AutNoAut
      FROM auditoria;
    `;
-  } else if (TIPO == 5 && BUSQUEDA !== "") {
-    sql = `SELECT
+    } else if (TIPO == 5 && BUSQUEDA !== "") {
+      sql = `SELECT
       id,
       Folio,
       OficioDependencia,
@@ -198,17 +158,17 @@ app.post("/AUDITORIA", (req, res) => {
       TipoGasto,
       Responsable,
       TipoSolicitud,
-      strftime('%d/%m/%Y', FechaOficio) AS FechaOficio,
-      strftime('%d/%m/%Y', FechaRecepcion) AS FechaRecepcion,
-      strftime('%d/%m/%Y', FechaElaboracion) AS FechaElaboracion,
-      strftime('%d/%m/%Y', FechaVencimiento) AS FechaVencimiento,
+      ( FechaOficio) AS FechaOficio,
+      ( FechaRecepcion) AS FechaRecepcion,
+      ( FechaElaboracion) AS FechaElaboracion,
+      ( FechaVencimiento) AS FechaVencimiento,
       FORMAT(Monto, 2) AS Monto,
       Comentarios,
-      strftime('%d/%m/%Y', FechaTurno) AS FechaTurno,
+      ( FechaTurno) AS FechaTurno,
       ObservacionesEstatus,
       NumOficioContestacion,
-      strftime('%d/%m/%Y', FechaTurnada) AS FechaTurnada,
-      strftime('%d/%m/%Y', FechaTerminada) AS FechaTerminada,
+      ( FechaTurnada) AS FechaTurnada,
+      ( FechaTerminada) AS FechaTerminada,
       ObsTerminada,
       AutNoAut
   FROM
@@ -221,29 +181,25 @@ app.post("/AUDITORIA", (req, res) => {
       OR UPPER(TipoGasto) LIKE '%' || UPPER($parametro_busqueda) || '%'
       OR UPPER(Responsable) LIKE '%' || UPPER($parametro_busqueda) || '%'
       OR UPPER(TipoSolicitud) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(strftime('%d/%m/%Y', FechaOficio)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(strftime('%d/%m/%Y', FechaRecepcion)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(strftime('%d/%m/%Y', FechaElaboracion)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(strftime('%d/%m/%Y', FechaVencimiento)) LIKE '%' || UPPER($parametro_busqueda) || '%'
+      OR UPPER(( FechaOficio)) LIKE '%' || UPPER($parametro_busqueda) || '%'
+      OR UPPER(( FechaRecepcion)) LIKE '%' || UPPER($parametro_busqueda) || '%'
+      OR UPPER(( FechaElaboracion)) LIKE '%' || UPPER($parametro_busqueda) || '%'
+      OR UPPER(( FechaVencimiento)) LIKE '%' || UPPER($parametro_busqueda) || '%'
       OR UPPER(FORMAT(Monto, 2)) LIKE '%' || UPPER($parametro_busqueda) || '%'
       OR UPPER(Comentarios) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(strftime('%d/%m/%Y', FechaTurno)) LIKE '%' || UPPER($parametro_busqueda) || '%'
+      OR UPPER(( FechaTurno)) LIKE '%' || UPPER($parametro_busqueda) || '%'
       OR UPPER(ObservacionesEstatus) LIKE '%' || UPPER($parametro_busqueda) || '%'
       OR UPPER(NumOficioContestacion) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(strftime('%d/%m/%Y', FechaTurnada)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(strftime('%d/%m/%Y', FechaTerminada)) LIKE '%' || UPPER($parametro_busqueda) || '%'
+      OR UPPER(( FechaTurnada)) LIKE '%' || UPPER($parametro_busqueda) || '%'
+      OR UPPER(( FechaTerminada)) LIKE '%' || UPPER($parametro_busqueda) || '%'
       OR UPPER(ObsTerminada) LIKE '%' || UPPER($parametro_busqueda) || '%'
       OR UPPER(AutNoAut) LIKE '%' || UPPER($parametro_busqueda) || '%'`;
-    // Define el parámetro de búsqueda
-    params.$parametro_busqueda = BUSQUEDA;
-  }
-
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
+      // Define el parámetro de búsqueda
+      params.$parametro_busqueda = BUSQUEDA;
     }
+
+    const rows = await uil.executeQuery(sql, params);
+
     if (rows.length > 0) {
       res
         .status(200)
@@ -253,10 +209,13 @@ app.post("/AUDITORIA", (req, res) => {
         .status(200)
         .json({ message: "Data retrieved successfully", datos: [] });
     }
-  });
+  } catch (error) {
+    console.error("Error retrieving data:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-app.post("/presupuesto", (req, res) => {
+app.post("/presupuesto", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
@@ -275,17 +234,17 @@ app.post("/presupuesto", (req, res) => {
      Responsable,
      ClaveTipoSolicitud,
      TipoSolicitud,
-     strftime('%d/%m/%Y', FechaOficio) AS FechaOficio,
-     strftime('%d/%m/%Y', FechaRecepcion) AS FechaRecepcion,
-     strftime('%d/%m/%Y', FechaElaboracion) AS FechaElaboracion,
-     strftime('%d/%m/%Y', FechaVencimiento) AS FechaVencimiento,
+     ( FechaOficio) AS FechaOficio,
+     ( FechaRecepcion) AS FechaRecepcion,
+     ( FechaElaboracion) AS FechaElaboracion,
+     ( FechaVencimiento) AS FechaVencimiento,
      Monto,
      MontoAmpliacion,
      Comentarios,
-     strftime('%d/%m/%Y', FechaTurno) AS FechaTurno,
+     ( FechaTurno) AS FechaTurno,
      ObservacionesEstatus,
-     strftime('%d/%m/%Y', FechaTurnada) AS FechaTurnada,
-     strftime('%d/%m/%Y', FechaTerminada) AS FechaTerminada,
+     ( FechaTurnada) AS FechaTurnada,
+     ( FechaTerminada) AS FechaTerminada,
      Anio
      FROM presupuestos
    `;
@@ -302,56 +261,48 @@ app.post("/presupuesto", (req, res) => {
       Responsable,
       ClaveTipoSolicitud,
       TipoSolicitud,
-      strftime('%d/%m/%Y', FechaOficio) AS FechaOficio,
-      strftime('%d/%m/%Y', FechaRecepcion) AS FechaRecepcion,
-      strftime('%d/%m/%Y', FechaElaboracion) AS FechaElaboracion,
-      strftime('%d/%m/%Y', FechaVencimiento) AS FechaVencimiento,
+      ( FechaOficio) AS FechaOficio,
+      ( FechaRecepcion) AS FechaRecepcion,
+      ( FechaElaboracion) AS FechaElaboracion,
+      ( FechaVencimiento) AS FechaVencimiento,
       Monto,
       MontoAmpliacion,
       Comentarios,
-      strftime('%d/%m/%Y', FechaTurno) AS FechaTurno,
+      ( FechaTurno) AS FechaTurno,
       ObservacionesEstatus,
-      strftime('%d/%m/%Y', FechaTurnada) AS FechaTurnada,
-      strftime('%d/%m/%Y', FechaTerminada) AS FechaTerminada,
+      ( FechaTurnada) AS FechaTurnada,
+      ( FechaTerminada) AS FechaTerminada,
       Anio
   FROM
       presupuestos
   WHERE
-      UPPER(CONCAT_WS('|', Folio, OficioRespuesta, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, ClaveTipoSolicitud, TipoSolicitud, strftime('%d/%m/%Y', FechaOficio), strftime('%d/%m/%Y', FechaRecepcion), strftime('%d/%m/%Y', FechaElaboracion), strftime('%d/%m/%Y', FechaVencimiento), Monto, MontoAmpliacion, Comentarios, strftime('%d/%m/%Y', FechaTurno), ObservacionesEstatus, strftime('%d/%m/%Y', FechaTurnada), strftime('%d/%m/%Y', FechaTerminada), Anio)) LIKE UPPER('%' || $parametro_busqueda || '%');`;
+      UPPER(CONCAT_WS('|', Folio, OficioRespuesta, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, ClaveTipoSolicitud, TipoSolicitud, ( FechaOficio), ( FechaRecepcion), ( FechaElaboracion), ( FechaVencimiento), Monto, MontoAmpliacion, Comentarios, ( FechaTurno), ObservacionesEstatus, ( FechaTurnada), ( FechaTerminada), Anio)) LIKE UPPER('%' || $parametro_busqueda || '%');`;
 
     params.$parametro_busqueda = BUSQUEDA;
   }
 
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, params);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
-app.post("/transferencias", (req, res) => {
+app.post("/transferencias", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
 
   if (TIPO == 4) {
     sql = `
-     SELECT 
+       SELECT 
 	          id,
 	          Anio,
 	          Folio,
-	          Respuesta,
 	          OficioDependencia,
 	          Secretaria,
 	          Dependencia,
@@ -361,89 +312,67 @@ app.post("/transferencias", (req, res) => {
 	          TipoSolicitud,
 	          FechaOficio,
 	          FechaRecepcion,
-	          FechaElaboracion,
-	          FechaVencimiento,
 	          Monto,
-	          montoAmpliacion,
 	          Comentarios,
-	          FechaTurno,
-	          ObservacionesEstatus,
 	          AsignadoDependencia,
 	          TramitadoDAMOP,
 	          FechaCapturada,
 	          ObservacionesCapturada,
-	          FechaTurnada,
 	          ObservacionesTurnada,
 	          FechaStanBy,
 	          ObservacionesStandBy,
 	          FechaTerminada,
 	          ObservacionesTerminada
       FROM transferencias
-;
    `;
   } else if (TIPO == 5 && BUSQUEDA !== "") {
     sql = `
     
-     
-           SELECT 
-                id,
-                Anio,
-                Folio,
-                Respuesta,
-                OficioDependencia,
-                Secretaria,
-                Dependencia,
-                TipoGasto,
-                Estatus,
-                Responsable,
-                TipoSolicitud,
-                FechaOficio,
-                FechaRecepcion,
-                FechaElaboracion,
-                FechaVencimiento,
-                Monto,
-                montoAmpliacion,
-                Comentarios,
-                FechaTurno,
-                ObservacionesEstatus,
-                AsignadoDependencia,
-                TramitadoDAMOP,
-                FechaCapturada,
-                ObservacionesCapturada,
-                FechaTurnada,
-                ObservacionesTurnada,
-                FechaStanBy,
-                ObservacionesStandBy,
-                FechaTerminada,
-                ObservacionesTerminada
-        FROM transferencias
+       SELECT 
+	          id,
+	          Anio,
+	          Folio,
+	          OficioDependencia,
+	          Secretaria,
+	          Dependencia,
+	          TipoGasto,
+	          Estatus,
+	          Responsable,
+	          TipoSolicitud,
+	          FechaOficio,
+	          FechaRecepcion,
+	          Monto,
+	          Comentarios,
+	          AsignadoDependencia,
+	          TramitadoDAMOP,
+	          FechaCapturada,
+	          ObservacionesCapturada,
+	          ObservacionesTurnada,
+	          FechaStanBy,
+	          ObservacionesStandBy,
+	          FechaTerminada,
+	          ObservacionesTerminada
+      FROM transferencias
         WHERE
-        UPPER(CONCAT_WS('|', Folio, Respuesta, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, TipoSolicitud, FechaOficio, FechaRecepcion, FechaElaboracion, FechaVencimiento, Monto, montoAmpliacion, Comentarios, FechaTurno, ObservacionesEstatus, FechaTurnada, FechaTerminada, Anio)) LIKE UPPER('%' || $parametro_busqueda || '%');
+        UPPER(CONCAT_WS('|', Folio,  OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, TipoSolicitud, FechaOficio, FechaRecepcion,   Monto,  Comentarios,    FechaTerminada, Anio)) LIKE UPPER('%' || $parametro_busqueda || '%');
 
       `;
 
     params.$parametro_busqueda = BUSQUEDA;
   }
 
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, params);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
-app.post("/PPI", (req, res) => {
+app.post("/PPI", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
@@ -458,7 +387,7 @@ app.post("/PPI", (req, res) => {
      CreadoPor,
      Anio,
      Noficio,
-     strftime('%d/%m/%Y', Fecha) AS Fecha,
+     ( Fecha) AS Fecha,
      TipoOficio,
      Dependencia,
      Descripcion,
@@ -475,7 +404,7 @@ app.post("/PPI", (req, res) => {
       CreadoPor,
       Anio,
       Noficio,
-      strftime('%d/%m/%Y', Fecha) AS Fecha,
+      ( Fecha) AS Fecha,
       TipoOficio,
       Dependencia,
       Descripcion,
@@ -485,32 +414,25 @@ app.post("/PPI", (req, res) => {
   WHERE
       UPPER(Anio) LIKE UPPER('%' || $parametro_busqueda || '%')
       OR UPPER(Noficio) LIKE UPPER('%' || $parametro_busqueda || '%')
-      OR UPPER(strftime('%d/%m/%Y', Fecha)) LIKE UPPER('%' || $parametro_busqueda || '%')
+      OR UPPER(( Fecha)) LIKE UPPER('%' || $parametro_busqueda || '%')
       OR UPPER(TipoOficio) LIKE UPPER('%' || $parametro_busqueda || '%')
       OR UPPER(Dependencia) LIKE UPPER('%' || $parametro_busqueda || '%')
       OR UPPER(Descripcion) LIKE UPPER('%' || $parametro_busqueda || '%')
       OR UPPER(Importe) LIKE UPPER('%' || $parametro_busqueda || '%');`;
     params.$parametro_busqueda = BUSQUEDA;
   }
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, params);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
-app.post("/MPD", (req, res) => {
+app.post("/MPD", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
@@ -524,25 +446,18 @@ app.post("/MPD", (req, res) => {
    `;
     params.$parametro_busqueda = BUSQUEDA;
   }
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, params);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
-app.post("/PF", (req, res) => {
+app.post("/PF", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
@@ -557,25 +472,18 @@ app.post("/PF", (req, res) => {
    `;
     params.$parametro_busqueda = BUSQUEDA;
   }
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, params);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
-app.post("/gastocapital", (req, res) => {
+app.post("/gastocapital", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
@@ -590,25 +498,18 @@ app.post("/gastocapital", (req, res) => {
    `;
     params.$parametro_busqueda = BUSQUEDA;
   }
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, params);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
-app.post("/gastocorriente", (req, res) => {
+app.post("/gastocorriente", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
@@ -623,22 +524,15 @@ app.post("/gastocorriente", (req, res) => {
    `;
     params.$parametro_busqueda = BUSQUEDA;
   }
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, params);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
 const createFolderIfNotExists = async (folderPath) => {
@@ -698,7 +592,6 @@ app.post("/getListFiles", async (req, res) => {
       throw new Error("No se proporcionó la ruta del archivo");
     }
     const filePath = path.join(ruta, req.body.P_ROUTE);
-    console.log(filePath);
     await createFolderIfNotExists(filePath);
     const content = await fs2.readdir(filePath);
 
@@ -720,11 +613,15 @@ app.post("/getListFiles", async (req, res) => {
         sensitivity: "base",
       })
     );
-
-    const responseData = buildResponse(filesAndDirectories, true, 200, "Éxito");
+    const responseData = uil.buildResponse(
+      filesAndDirectories,
+      true,
+      200,
+      "Éxito"
+    );
     res.status(200).json(responseData);
   } catch (error) {
-    const responseData = buildResponse(null, false, 500, error.message);
+    const responseData = uil.buildResponse(null, false, 500, error.message);
     res.status(500).json(responseData);
   }
 });
@@ -742,7 +639,7 @@ app.post("/getFile", async (req, res) => {
     const filePath = `${ruta}/${req.body.P_ROUTE}/${req.body.P_NOMBRE}`;
     const fileContent = await fs2.readFile(filePath, { encoding: "base64" });
 
-    const responseData = buildResponse(
+    const responseData = uil.buildResponse(
       { FILE: fileContent, TIPO: fileExtension },
       true,
       200,
@@ -750,12 +647,12 @@ app.post("/getFile", async (req, res) => {
     );
     res.status(200).json(responseData);
   } catch (error) {
-    const responseData = buildResponse(null, false, 500, error.message);
+    const responseData = uil.buildResponse(null, false, 500, error.message);
     res.status(500).json(responseData);
   }
 });
 
-app.post("/inapGralAll", (req, res) => {
+app.post("/inapGralAll", async (req, res) => {
   const sql = `
    SELECT inap.Id,
        inap.Clave,
@@ -771,25 +668,18 @@ app.post("/inapGralAll", (req, res) => {
        WHERE  inap.Deleted=0
        order by inap.Clave
    `;
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, []);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
-app.post("/inapGral01All", (req, res) => {
+app.post("/inapGral01All", async (req, res) => {
   const sql = `
    SELECT 
    inap01.Id,
@@ -809,25 +699,18 @@ app.post("/inapGral01All", (req, res) => {
   FROM inap_gral_01 inap01
   WHERE inap01.Deleted =0
    `;
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, []);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
-app.post("/onu", (req, res) => {
+app.post("/onu", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
   let params = {};
@@ -858,22 +741,15 @@ app.post("/onu", (req, res) => {
     params.$parametro_busqueda = BUSQUEDA;
   }
 
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    if (rows.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: rows });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Data retrieved successfully", datos: [] });
-    }
-  });
+  const rows = await uil.executeQuery(sql, params);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
 });
 
 app.post("/deletedFile", async (req, res) => {
@@ -888,10 +764,10 @@ app.post("/deletedFile", async (req, res) => {
     const filePath = `${ruta}/${req.body.P_ROUTE}/${req.body.P_NOMBRE}`;
     await fs2.unlink(filePath);
 
-    const responseData = buildResponse([], true, 200, "Exito");
+    const responseData = uil.buildResponse([], true, 200, "Exito");
     res.status(200).json(responseData);
   } catch (error) {
-    const responseData = buildResponse(null, false, 500, error.message);
+    const responseData = uil.buildResponse(null, false, 500, error.message);
     res.status(500).json(responseData);
   }
 });
@@ -910,10 +786,10 @@ app.post("/deletedFolder", async (req, res) => {
       throw new Error("La ruta proporcionada no es un directorio.");
     }
 
-    const responseData = buildResponse([], true, 200, "Exito");
+    const responseData = uil.buildResponse([], true, 200, "Exito");
     res.status(200).json(responseData);
   } catch (error) {
-    const responseData = buildResponse(null, false, 500, error.message);
+    const responseData = uil.buildResponse(null, false, 500, error.message);
     res.status(500).json(responseData);
   }
 });
@@ -936,15 +812,13 @@ app.post("/saveFile", upload.single("file"), async (req, res) => {
     const rutaCARPETA = `${ruta}/${rutacarpeta}`;
     const rutaArchivo = `${ruta}/${rutacarpeta}/${nombreArchivo}`;
 
-    console.log("RUTA de rutaCARPETA");
-    console.log(rutaCARPETA);
     await createFolderIfNotExists(rutaCARPETA);
 
     await fs2.writeFile(rutaArchivo, contenido);
-    const responseData = buildResponse([], true, 200, "Exito");
+    const responseData = uil.buildResponse([], true, 200, "Exito");
     res.status(200).json(responseData);
   } catch (error) {
-    const responseData = buildResponse(null, false, 500, error.message);
+    const responseData = uil.buildResponse(null, false, 500, error.message);
     res.status(500).json(responseData);
   }
 });
@@ -957,7 +831,7 @@ app.post("/getFileByRoute", async (req, res) => {
     const filePath = `${req.body.P_ROUTE}`;
     const fileContent = await fs2.readFile(filePath, { encoding: "base64" });
 
-    const responseData = buildResponse(
+    const responseData = uil.buildResponse(
       { FILE: fileContent, TIPO: ".pdf" },
       true,
       200,
@@ -965,11 +839,12 @@ app.post("/getFileByRoute", async (req, res) => {
     );
     res.status(200).json(responseData);
   } catch (error) {
-    const responseData = buildResponse(null, false, 500, error.message);
+    const responseData = uil.buildResponse(null, false, 500, error.message);
     res.status(500).json(responseData);
   }
 });
 
-app.listen(port, () => {
-  console.log(`Servidor Iniciado http:localhost:${port}`);
+const server = app.listen(PORT, HOST, () => {
+  const { address, port } = server.address();
+  console.log(`Server running on http://${address}:${port}`);
 });

@@ -77,7 +77,7 @@ const Inap = () => {
         formData.append("P_ID", id);
         // formData.append("P_CreadoPor", user.Id);
         const response = await axios.post(
-          "http://10.200.4.176:3001/" + "/migradata",
+          process.env.REACT_APP_APPLICATION_BASE_URL + "migradata",
           formData
         );
         if (response.data.success) {
@@ -104,7 +104,7 @@ const Inap = () => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/inapGral01All", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "inapGral01All", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {
@@ -137,7 +137,7 @@ const Inap = () => {
     };
 
     axios
-      .post("http://10.200.4.176:3001/inapGralAll", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "inapGralAll", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {

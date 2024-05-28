@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@mui/material";
 import {
   DataGrid,
   GridColumnVisibilityModel,
@@ -7,16 +6,10 @@ import {
 import React from "react";
 
 export default function MUIXDataGridSimple(props: any) {
-  const [pageSize, setPageSize] = React.useState(10);
-
   const [columnVisibilityModel, setColumnVisibilityModel] =
     React.useState<GridColumnVisibilityModel>({
       id: false,
     });
-
-  const hasData = props.rows.length < 8;
-
-  const Data = props.rows.length === 0;
 
   return (
     <div style={{ height: "70vh", overflow: "auto" }}>
@@ -33,7 +26,7 @@ export default function MUIXDataGridSimple(props: any) {
         disableSelectionOnClick
         disableDensitySelector
         getRowId={(row) => (row.Id ? row.Id : row.id)}
-        pageSize={pageSize}
+        pageSize={10}
         getRowHeight={() => "auto"}
         sx={{
           fontFamily: "Poppins,sans-serif",
@@ -102,9 +95,6 @@ export default function MUIXDataGridSimple(props: any) {
           filterPanelInputLabel: "Valor",
           filterPanelInputPlaceholder: "Valor Filtrado",
         }}
-        // style={{
-        //   height: Data ? "200px" : hasData ? "auto" : "100%",
-        // }}
       />
     </div>
   );

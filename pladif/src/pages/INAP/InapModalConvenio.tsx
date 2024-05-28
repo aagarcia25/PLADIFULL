@@ -11,7 +11,6 @@ import { Dayjs } from "dayjs";
 import * as React from "react";
 import { useState } from "react";
 import CustomizedDate from "../../share/CustomizedDate";
-import MsgAlert from "../../share/MsgAlert";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -36,7 +35,6 @@ export default function InapModalConvenio({
   const [objetivo, setobjetivo] = useState<string>();
   const [monto, setmonto] = useState<string>();
 
-  // const user = JSON.parse(String(getItem("User"))) as any;
   const handledatestar = (v: any) => {
     setfstart(v);
   };
@@ -53,7 +51,6 @@ export default function InapModalConvenio({
     let data = {
       TIPO: 1,
       P_IdGral: obj.Id,
-      //  P_CreadoPor: user.Id,
       P_FechaConvenioinicio: fstart,
       P_FechaConveniofin: fend,
       P_NombreConvenio: convenio,
@@ -61,25 +58,6 @@ export default function InapModalConvenio({
       P_Monto: monto,
       P_FechaFiniquito: ffin,
     };
-    /*
-    AuthService.inapGral01All(data).then((res) => {
-      if (res.NUMCODE == 200) {
-        MsgAlert(
-          "Información",
-          "Registro Agregado con correctamente",
-          "success"
-        );
-
-        setfstart(null);
-        setfend(null);
-        setffin(null);
-        setconvenio("");
-        setobjetivo("");
-        setmonto("");
-      } else {
-        MsgAlert("Error", res.STRMESSAGE, "error");
-      }
-    });*/
   };
 
   return (
