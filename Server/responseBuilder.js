@@ -39,7 +39,7 @@ function excelDateToJSDate(serial) {
   return new Date(
     date_info.getFullYear(),
     date_info.getMonth(),
-    date_info.getDate(),
+    date_info.getDate() + 1,
     hours,
     minutes,
     seconds

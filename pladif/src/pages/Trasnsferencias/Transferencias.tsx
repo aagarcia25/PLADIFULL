@@ -31,14 +31,6 @@ const Transferencias = ({
     setopenModalFiles(true);
   };
 
-  const handleVerSub2 = (v: any) => {
-    const anioObtenido = v.row.Anio;
-    setidowner(
-      "\\TRANFERENCIAS\\RESPUESTA\\" + anioObtenido + "\\" + v.row.Respuesta
-    );
-    setopenModalFiles(true);
-  };
-
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -72,35 +64,6 @@ const Transferencias = ({
         );
       },
     },
-    {
-      field: "Respuesta",
-      disableExport: true,
-      headerName: "Respuesta",
-      description: "Respuesta",
-      sortable: false,
-      width: 150,
-      renderCell: (v) => {
-        return (
-          <>
-            {v.row.Respuesta ? (
-              <>
-                {v.row.Respuesta}
-                <ButtonsDetail
-                  title={"Ver Carpeta"}
-                  handleFunction={handleVerSub2}
-                  show={true}
-                  icon={<DriveFolderUploadIcon />}
-                  row={v}
-                ></ButtonsDetail>
-              </>
-            ) : (
-              ""
-            )}
-          </>
-        );
-      },
-    },
-
     {
       field: "OficioDependencia",
       headerName: "Oficio de la Dependencia",
@@ -158,48 +121,21 @@ const Transferencias = ({
       description: "Fecha de Recepcion",
       width: 100,
     },
-    // {
-    //   field: "FechaElaboracion",
-    //   headerName: "Fecha de Elaboracion",
-    //   description: "Fecha de Elaboracion",
-    //   width: 100,
-    // },
-    // {
-    //   field: "FechaVencimiento",
-    //   headerName: "Fecha de Vencimiento",
-    //   description: "Fecha de Vencimiento",
-    //   width: 100,
-    // },
+
     {
       field: "Monto",
       headerName: "Monto",
       description: "Monto",
       width: 200,
     },
-    // {
-    //   field: "montoAmpliacion",
-    //   headerName: "Monto Ampliación",
-    //   description: "Monto Ampliación",
-    //   width: 200,
-    // },
+
     {
       field: "Comentarios",
       headerName: "Comentarios",
       description: "Comentarios",
       width: 400,
     },
-    // {
-    //   field: "FechaTurno",
-    //   headerName: "Fecha en que se Turno",
-    //   description: "Fecha en que se Turno",
-    //   width: 100,
-    // },
-    // {
-    //   field: "ObservacionesEstatus",
-    //   headerName: "Observaciones del Estatus",
-    //   description: "Observaciones del Estatus",
-    //   width: 350,
-    // },
+
     {
       field: "AsignadoDependencia",
       headerName: "Asignado Dependencia",
@@ -224,12 +160,7 @@ const Transferencias = ({
       description: "Observaciones Capturadas",
       width: 250,
     },
-    // {
-    //   field: "FechaTurnada",
-    //   headerName: "Fecha Turnada",
-    //   description: "Fecha Turnada",
-    //   width: 100,
-    // },
+
     {
       field: "ObservacionesTurnada",
       headerName: "Observaciones Turnada",

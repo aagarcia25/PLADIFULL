@@ -383,11 +383,6 @@ app.post("/PPI", async (req, res) => {
     sql = `
      SELECT
      Id,
-     Deleted,
-     UltimaActualizacion,
-     FechaCreacion,
-     ModificadoPor,
-     CreadoPor,
      Anio,
      Noficio,
      ( Fecha) AS Fecha,
@@ -400,11 +395,6 @@ app.post("/PPI", async (req, res) => {
   } else if (TIPO == 5 && BUSQUEDA !== "") {
     sql = `SELECT 
       Id,
-      Deleted,
-      UltimaActualizacion,
-      FechaCreacion,
-      ModificadoPor,
-      CreadoPor,
       Anio,
       Noficio,
       ( Fecha) AS Fecha,
@@ -847,7 +837,7 @@ app.post("/getFileByRoute", async (req, res) => {
   }
 });
 
-function insertDataIntoDatabase(data) {
+function insertDataIntoDatabaseTransferencias(data) {
   return new Promise((resolve, reject) => {
     const insertQuery = `
       INSERT INTO transferencias ( Anio, Folio, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, TipoSolicitud, FechaOficio, FechaRecepcion, Monto, Comentarios, AsignadoDependencia, TramitadoDAMOP, FechaCapturada, ObservacionesCapturada, ObservacionesTurnada, FechaStanBy, ObservacionesStandBy, FechaTerminada, ObservacionesTerminada)
@@ -900,6 +890,36 @@ function insertDataIntoDatabase(data) {
   });
 }
 
+function insertDataIntoDatabaseppi(data) {
+  return new Promise((resolve, reject) => {
+    const insertQuery = `
+      INSERT INTO ppi ( Anio, Noficio, Fecha, TipoOficio, Dependencia, Descripcion, Importe)
+      VALUES ( ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    for (const row of data) {
+      const values = [
+        row.Anio,
+        row.Noficio,
+        row.Fecha
+          ? format(uil.excelDateToJSDate(row.Fecha), "yyyy-MM-dd")
+          : null,
+        row.TipoOficio,
+        row.Dependencia,
+        row.Descripcion,
+        row.Importe,
+      ];
+      console.log(values);
+      db_connect.query(insertQuery, values, (err) => {
+        if (err) {
+          return reject(err);
+        }
+      });
+    }
+    resolve();
+  });
+}
+
 // Ruta para manejar la subida del archivo Excel
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
@@ -912,7 +932,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     const sheet = workbook.Sheets[sheetName];
     const data = xlsx.utils.sheet_to_json(sheet);
 
-    await insertDataIntoDatabase(data);
+    //await insertDataIntoDatabaseTransferencias(data);
+    await insertDataIntoDatabaseppi(data);
 
     res.status(200).json({ message: "Data inserted successfully" });
   } catch (error) {
