@@ -889,6 +889,27 @@ function insertDataIntoDatabaseTransferencias(data) {
   });
 }
 
+function insertDataIntoDatabasePolizas(data) {
+  return new Promise((resolve, reject) => {
+    const insertQuery = `
+      INSERT INTO polizas2 ( SP, Archivo, Texto)
+      VALUES ( ?, ?, ?)
+    `;
+
+    for (const row of data) {
+      console.log(row);
+      const values = [row.SP, row.Archivo, row.Texto];
+
+      db_connect.query(insertQuery, values, (err) => {
+        if (err) {
+          return reject(err);
+        }
+      });
+    }
+    resolve();
+  });
+}
+
 function insertDataIntoDatabaseppi(data) {
   return new Promise((resolve, reject) => {
     const insertQuery = `
@@ -897,6 +918,7 @@ function insertDataIntoDatabaseppi(data) {
     `;
 
     for (const row of data) {
+      print(row);
       const values = [
         row.Anio,
         row.Noficio,
@@ -932,8 +954,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     const data = xlsx.utils.sheet_to_json(sheet);
 
     //await insertDataIntoDatabaseTransferencias(data);
-    await insertDataIntoDatabaseppi(data);
-
+    //await insertDataIntoDatabaseppi(data);
+    await insertDataIntoDatabasePolizas(data);
     res.status(200).json({ message: "Data inserted successfully" });
   } catch (error) {
     console.error("Error processing file:", error);
