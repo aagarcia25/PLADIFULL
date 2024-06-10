@@ -6,7 +6,7 @@ const db_config = {
   database: process.env.APP_DB_DATABASE,
   password: process.env.APP_DB_PASSWORD,
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: 100,
   queueLimit: 0,
 };
 
