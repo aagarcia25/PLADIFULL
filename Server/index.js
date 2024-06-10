@@ -88,16 +88,17 @@ app.post("/siregob", async (req, res) => {
                 PropuestaEconomica
              FROM siregob_01
              WHERE
-                UPPER(NombreContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
-                OR UPPER(( FechaContrato)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-                OR UPPER(pdfContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
-                OR UPPER(ObjetivoContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
-                OR UPPER(MontoContrato) LIKE '%' || UPPER($parametro_busqueda) || '%'
+                UPPER(NombreContrato) LIKE '%' || UPPER(?) || '%'
+                OR UPPER(( FechaContrato)) LIKE '%' || UPPER(?) || '%'
+                OR UPPER(pdfContrato) LIKE '%' || UPPER(?) || '%'
+                OR UPPER(ObjetivoContrato) LIKE '%' || UPPER(?) || '%'
+                OR UPPER(MontoContrato) LIKE '%' || UPPER(?) || '%'
              ORDER BY 
-                strftime('%Y', FechaContrato) DESC`;
+                 FechaContrato DESC`;
 
-      // Define el parámetro de búsqueda
-      params.$parametro_busqueda = BUSQUEDA;
+      // Define los parámetros de búsqueda
+      const parametro_busqueda = Array(5).fill(BUSQUEDA);
+      params = parametro_busqueda;
     } else {
       return res.status(400).json({ error: "Invalid request parameters" });
     }
@@ -174,30 +175,31 @@ app.post("/AUDITORIA", async (req, res) => {
        DATE_FORMAT( FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
        ObsTerminada,
        AutNoAut
-     FROM auditoria;
+     FROM auditoria
   WHERE
-      UPPER(Folio) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(OficioDependencia) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(Secretaria) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(Dependencia) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(TipoGasto) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(Responsable) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(TipoSolicitud) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(( FechaOficio)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(( FechaRecepcion)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(( FechaElaboracion)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(( FechaVencimiento)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(FORMAT(Monto, 2)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(Comentarios) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(( FechaTurno)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(ObservacionesEstatus) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(NumOficioContestacion) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(( FechaTurnada)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(( FechaTerminada)) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(ObsTerminada) LIKE '%' || UPPER($parametro_busqueda) || '%'
-      OR UPPER(AutNoAut) LIKE '%' || UPPER($parametro_busqueda) || '%'`;
-      // Define el parámetro de búsqueda
-      params.$parametro_busqueda = BUSQUEDA;
+      UPPER(Folio) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(OficioDependencia) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(Secretaria) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(Dependencia) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(TipoGasto) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(Responsable) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(TipoSolicitud) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(( FechaOficio)) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(( FechaRecepcion)) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(( FechaElaboracion)) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(( FechaVencimiento)) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(FORMAT(Monto, 2)) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(Comentarios) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(( FechaTurno)) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(ObservacionesEstatus) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(NumOficioContestacion) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(( FechaTurnada)) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(( FechaTerminada)) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(ObsTerminada) LIKE '%' || UPPER(?) || '%'
+      OR UPPER(AutNoAut) LIKE '%' || UPPER(?) || '%'`;
+      // Define los parámetros de búsqueda
+      const parametro_busqueda = Array(20).fill(BUSQUEDA);
+      params = parametro_busqueda;
     }
 
     const rows = await uil.executeQuery(sql, params);
@@ -278,9 +280,11 @@ app.post("/presupuesto", async (req, res) => {
      Anio
      FROM presupuestos
   WHERE
-      UPPER(CONCAT_WS('|', Folio, OficioRespuesta, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, ClaveTipoSolicitud, TipoSolicitud, ( FechaOficio), ( FechaRecepcion), ( FechaElaboracion), ( FechaVencimiento), Monto, MontoAmpliacion, Comentarios, ( FechaTurno), ObservacionesEstatus, ( FechaTurnada), ( FechaTerminada), Anio)) LIKE UPPER('%' || $parametro_busqueda || '%');`;
+      UPPER(CONCAT_WS('|', Folio, OficioRespuesta, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, ClaveTipoSolicitud, TipoSolicitud, ( FechaOficio), ( FechaRecepcion), ( FechaElaboracion), ( FechaVencimiento), Monto, MontoAmpliacion, Comentarios, ( FechaTurno), ObservacionesEstatus, ( FechaTurnada), ( FechaTerminada), Anio)) LIKE UPPER('%' || ? || '%');`;
 
-    params.$parametro_busqueda = BUSQUEDA;
+    // Define los parámetros de búsqueda
+    const parametro_busqueda = Array(1).fill(BUSQUEDA);
+    params = parametro_busqueda;
   }
 
   const rows = await uil.executeQuery(sql, params);
@@ -356,11 +360,13 @@ app.post("/transferencias", async (req, res) => {
 	          ObservacionesTerminada
       FROM transferencias
         WHERE
-        UPPER(CONCAT_WS('|', Folio,  OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, TipoSolicitud, FechaOficio, FechaRecepcion,   Monto,  Comentarios,    FechaTerminada, Anio)) LIKE UPPER('%' || $parametro_busqueda || '%');
+        UPPER(CONCAT_WS('|', Folio,  OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, TipoSolicitud, FechaOficio, FechaRecepcion,   Monto,  Comentarios,    FechaTerminada, Anio)) LIKE UPPER('%' || ? || '%');
 
       `;
 
-    params.$parametro_busqueda = BUSQUEDA;
+    // Define los parámetros de búsqueda
+    const parametro_busqueda = Array(1).fill(BUSQUEDA);
+    params = parametro_busqueda;
   }
 
   const rows = await uil.executeQuery(sql, params);
@@ -404,14 +410,16 @@ app.post("/PPI", async (req, res) => {
   FROM 
       ppi
   WHERE
-      UPPER(Anio) LIKE UPPER('%' || $parametro_busqueda || '%')
-      OR UPPER(Noficio) LIKE UPPER('%' || $parametro_busqueda || '%')
-      OR UPPER(( Fecha)) LIKE UPPER('%' || $parametro_busqueda || '%')
-      OR UPPER(TipoOficio) LIKE UPPER('%' || $parametro_busqueda || '%')
-      OR UPPER(Dependencia) LIKE UPPER('%' || $parametro_busqueda || '%')
-      OR UPPER(Descripcion) LIKE UPPER('%' || $parametro_busqueda || '%')
-      OR UPPER(Importe) LIKE UPPER('%' || $parametro_busqueda || '%');`;
-    params.$parametro_busqueda = BUSQUEDA;
+      UPPER(Anio) LIKE UPPER('%' || ? || '%')
+      OR UPPER(Noficio) LIKE UPPER('%' || ? || '%')
+      OR UPPER(( Fecha)) LIKE UPPER('%' || ? || '%')
+      OR UPPER(TipoOficio) LIKE UPPER('%' || ? || '%')
+      OR UPPER(Dependencia) LIKE UPPER('%' || ? || '%')
+      OR UPPER(Descripcion) LIKE UPPER('%' || ? || '%')
+      OR UPPER(Importe) LIKE UPPER('%' || ? || '%');`;
+    // Define los parámetros de búsqueda
+    const parametro_busqueda = Array(7).fill(BUSQUEDA);
+    params = parametro_busqueda;
   }
   const rows = await uil.executeQuery(sql, params);
 
@@ -432,11 +440,6 @@ app.post("/MPD", async (req, res) => {
     sql = `
       SELECT * FROM manualoperacion
    `;
-  } else if (TIPO == 5 && BUSQUEDA !== "") {
-    sql = `
-      SELECT * FROM manualoperacion
-   `;
-    params.$parametro_busqueda = BUSQUEDA;
   }
   const rows = await uil.executeQuery(sql, params);
 
@@ -458,11 +461,6 @@ app.post("/PF", async (req, res) => {
     sql = `
       SELECT * FROM pf
    `;
-  } else if (TIPO == 5 && BUSQUEDA !== "") {
-    sql = `
-      SELECT * FROM pf
-   `;
-    params.$parametro_busqueda = BUSQUEDA;
   }
   const rows = await uil.executeQuery(sql, params);
 
@@ -488,7 +486,6 @@ app.post("/gastocapital", async (req, res) => {
     sql = `
       SELECT * FROM pf
    `;
-    params.$parametro_busqueda = BUSQUEDA;
   }
   const rows = await uil.executeQuery(sql, params);
 
@@ -514,7 +511,6 @@ app.post("/gastocorriente", async (req, res) => {
     sql = `
      SELECT * FROM polizas
    `;
-    params.$parametro_busqueda = BUSQUEDA;
   }
   const rows = await uil.executeQuery(sql, params);
 
@@ -724,13 +720,14 @@ app.post("/onu", async (req, res) => {
         MontoConvenio
        FROM onu
          WHERE
-         UPPER(FechaConvenio) LIKE '%' || UPPER($parametro_busqueda) || '%'
-         OR UPPER(NombreConvenio) LIKE '%' || UPPER($parametro_busqueda) || '%'
-         OR UPPER(ObjetivoConvenio) LIKE '%' || UPPER($parametro_busqueda) || '%'
-         OR UPPER(MontoConvenio) LIKE '%' || UPPER($parametro_busqueda) || '%'
+         UPPER(FechaConvenio) LIKE '%' || UPPER(?) || '%'
+         OR UPPER(NombreConvenio) LIKE '%' || UPPER(?) || '%'
+         OR UPPER(ObjetivoConvenio) LIKE '%' || UPPER(?) || '%'
+         OR UPPER(MontoConvenio) LIKE '%' || UPPER(?) || '%'
        `;
-    // Define el parámetro de búsqueda
-    params.$parametro_busqueda = BUSQUEDA;
+    // Define los parámetros de búsqueda
+    const parametro_busqueda = Array(4).fill(BUSQUEDA);
+    params = parametro_busqueda;
   }
 
   const rows = await uil.executeQuery(sql, params);

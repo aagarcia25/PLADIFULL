@@ -283,11 +283,7 @@ const Main = () => {
               </ListItemButton>
             </Tooltip>
 
-            <Tooltip
-              title={
-                "Control y Administración de los Oficios Correspondientes a Presupuesto"
-              }
-            >
+            <Tooltip title={"Ampliaciones y Suficiencias Presupuestales"}>
               <ListItemButton
                 onClick={() => {
                   setSelectedOption("presupuesto");
