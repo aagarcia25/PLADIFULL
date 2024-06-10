@@ -304,7 +304,7 @@ const Main = () => {
                   <ArticleIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Oficios Presupuestos"
+                  primary="Ampliaciones y Suficiencias Presupuestales"
                   style={{
                     color: selectedOption === "presupuesto" ? "#FFFFFF" : "",
                   }}

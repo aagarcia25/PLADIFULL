@@ -272,7 +272,7 @@ const Busqueda = () => {
             noWrap
             sx={{ flexGrow: 1, textAlign: "center" }}
           >
-            Oficios Presupuesto
+            Ampliaciones y Suficiencias Presupuestales
           </Typography>
           <OficioPresupuesto
             tipo={"BUS"}
