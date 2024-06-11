@@ -88,11 +88,12 @@ app.post("/siregob", async (req, res) => {
                 PropuestaEconomica
              FROM siregob_01
              WHERE
-                UPPER(NombreContrato) LIKE '%' || UPPER(?) || '%'
-                OR UPPER(( FechaContrato)) LIKE '%' || UPPER(?) || '%'
-                OR UPPER(pdfContrato) LIKE '%' || UPPER(?) || '%'
-                OR UPPER(ObjetivoContrato) LIKE '%' || UPPER(?) || '%'
-                OR UPPER(MontoContrato) LIKE '%' || UPPER(?) || '%'
+
+                UPPER(NombreContrato) LIKE UPPER(CONCAT('%', ?, '%'))
+                OR UPPER(FechaContrato) LIKE UPPER(CONCAT('%', ?, '%'))
+                OR UPPER(pdfContrato) LIKE UPPER(CONCAT('%', ?, '%'))
+                OR UPPER(ObjetivoContrato) LIKE UPPER(CONCAT('%', ?, '%'))
+                OR UPPER(MontoContrato) LIKE UPPER(CONCAT('%', ?, '%'))
              ORDER BY 
                  FechaContrato DESC`;
 
@@ -124,84 +125,87 @@ app.post("/AUDITORIA", async (req, res) => {
   try {
     const { TIPO, BUSQUEDA } = req.body;
     let sql;
-    let params = {};
+    let params = [];
 
     if (TIPO == 4) {
       sql = `
-     SELECT
-       id,
-       Folio,
-       OficioDependencia,
-       Secretaria,
-       Dependencia,
-       TipoGasto,
-       Responsable,
-       TipoSolicitud,
-       DATE_FORMAT(FechaOficio, '%d/%m/%Y') AS FechaOficio,
-       DATE_FORMAT( FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
-       DATE_FORMAT( FechaElaboracion, '%d/%m/%Y') AS FechaElaboracion,
-       DATE_FORMAT( FechaVencimiento, '%d/%m/%Y') AS FechaVencimiento,
-       ( Monto) AS Monto,
-       Comentarios,
-       DATE_FORMAT( FechaTurno, '%d/%m/%Y') AS FechaTurno,
-       ObservacionesEstatus,
-       NumOficioContestacion,
-       DATE_FORMAT( FechaTurnada, '%d/%m/%Y') AS FechaTurnada,
-       DATE_FORMAT( FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
-       ObsTerminada,
-       AutNoAut
-     FROM auditoria;
-   `;
+        SELECT
+          id,
+          Folio,
+          OficioDependencia,
+          Secretaria,
+          Dependencia,
+          TipoGasto,
+          Responsable,
+          TipoSolicitud,
+          DATE_FORMAT(FechaOficio, '%d/%m/%Y') AS FechaOficio,
+          DATE_FORMAT(FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
+          DATE_FORMAT(FechaElaboracion, '%d/%m/%Y') AS FechaElaboracion,
+          DATE_FORMAT(FechaVencimiento, '%d/%m/%Y') AS FechaVencimiento,
+          Monto,
+          Comentarios,
+          DATE_FORMAT(FechaTurno, '%d/%m/%Y') AS FechaTurno,
+          ObservacionesEstatus,
+          NumOficioContestacion,
+          DATE_FORMAT(FechaTurnada, '%d/%m/%Y') AS FechaTurnada,
+          DATE_FORMAT(FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
+          ObsTerminada,
+          AutNoAut
+        FROM auditoria;
+      `;
     } else if (TIPO == 5 && BUSQUEDA !== "") {
-      sql = ` SELECT
-       id,
-       Folio,
-       OficioDependencia,
-       Secretaria,
-       Dependencia,
-       TipoGasto,
-       Responsable,
-       TipoSolicitud,
-       DATE_FORMAT(FechaOficio, '%d/%m/%Y') AS FechaOficio,
-       DATE_FORMAT( FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
-       DATE_FORMAT( FechaElaboracion, '%d/%m/%Y') AS FechaElaboracion,
-       DATE_FORMAT( FechaVencimiento, '%d/%m/%Y') AS FechaVencimiento,
-       ( Monto) AS Monto,
-       Comentarios,
-       DATE_FORMAT( FechaTurno, '%d/%m/%Y') AS FechaTurno,
-       ObservacionesEstatus,
-       NumOficioContestacion,
-       DATE_FORMAT( FechaTurnada, '%d/%m/%Y') AS FechaTurnada,
-       DATE_FORMAT( FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
-       ObsTerminada,
-       AutNoAut
-     FROM auditoria
-  WHERE
-      UPPER(Folio) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(OficioDependencia) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(Secretaria) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(Dependencia) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(TipoGasto) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(Responsable) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(TipoSolicitud) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(( FechaOficio)) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(( FechaRecepcion)) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(( FechaElaboracion)) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(( FechaVencimiento)) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(FORMAT(Monto, 2)) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(Comentarios) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(( FechaTurno)) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(ObservacionesEstatus) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(NumOficioContestacion) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(( FechaTurnada)) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(( FechaTerminada)) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(ObsTerminada) LIKE '%' || UPPER(?) || '%'
-      OR UPPER(AutNoAut) LIKE '%' || UPPER(?) || '%'`;
+      sql = `
+        SELECT
+          id,
+          Folio,
+          OficioDependencia,
+          Secretaria,
+          Dependencia,
+          TipoGasto,
+          Responsable,
+          TipoSolicitud,
+          DATE_FORMAT(FechaOficio, '%d/%m/%Y') AS FechaOficio,
+          DATE_FORMAT(FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
+          DATE_FORMAT(FechaElaboracion, '%d/%m/%Y') AS FechaElaboracion,
+          DATE_FORMAT(FechaVencimiento, '%d/%m/%Y') AS FechaVencimiento,
+          Monto,
+          Comentarios,
+          DATE_FORMAT(FechaTurno, '%d/%m/%Y') AS FechaTurno,
+          ObservacionesEstatus,
+          NumOficioContestacion,
+          DATE_FORMAT(FechaTurnada, '%d/%m/%Y') AS FechaTurnada,
+          DATE_FORMAT(FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
+          ObsTerminada,
+          AutNoAut
+        FROM auditoria
+        WHERE
+          UPPER(Folio) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(OficioDependencia) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(Secretaria) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(Dependencia) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(TipoGasto) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(Responsable) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(TipoSolicitud) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(DATE_FORMAT(FechaOficio, '%d/%m/%Y')) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(DATE_FORMAT(FechaRecepcion, '%d/%m/%Y')) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(DATE_FORMAT(FechaElaboracion, '%d/%m/%Y')) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(DATE_FORMAT(FechaVencimiento, '%d/%m/%Y')) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(FORMAT(Monto, 2)) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(Comentarios) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(DATE_FORMAT(FechaTurno, '%d/%m/%Y')) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(ObservacionesEstatus) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(NumOficioContestacion) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(DATE_FORMAT(FechaTurnada, '%d/%m/%Y')) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(DATE_FORMAT(FechaTerminada, '%d/%m/%Y')) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(ObsTerminada) LIKE CONCAT('%', UPPER(?), '%')
+          OR UPPER(AutNoAut) LIKE CONCAT('%', UPPER(?), '%');
+      `;
+
       // Define los parámetros de búsqueda
-      const parametro_busqueda = Array(20).fill(BUSQUEDA);
-      params = parametro_busqueda;
+      params = Array(20).fill(BUSQUEDA);
     }
 
+    console.log(params);
     const rows = await uil.executeQuery(sql, params);
 
     if (rows.length > 0) {
@@ -222,161 +226,208 @@ app.post("/AUDITORIA", async (req, res) => {
 app.post("/presupuesto", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
-  let params = {};
+  let params = [];
 
   if (TIPO == 4) {
     sql = `
-     SELECT
-     id,
-     Folio,
-     OficioRespuesta,
-     OficioDependencia,
-     Secretaria,
-     Dependencia,
-     TipoGasto,
-     Estatus,
-     Responsable,
-     ClaveTipoSolicitud,
-     TipoSolicitud,
-     DATE_FORMAT( FechaOficio, '%d/%m/%Y') AS FechaOficio,
-     DATE_FORMAT( FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
-     DATE_FORMAT( FechaElaboracion, '%d/%m/%Y') AS FechaElaboracion,
-     DATE_FORMAT( FechaVencimiento, '%d/%m/%Y') AS FechaVencimiento,
-     Monto,
-     MontoAmpliacion,
-     Comentarios,
-     DATE_FORMAT( FechaTurno, '%d/%m/%Y') AS FechaTurno,
-     ObservacionesEstatus,
-     DATE_FORMAT( FechaTurnada, '%d/%m/%Y') AS FechaTurnada,
-     DATE_FORMAT( FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
-     Anio
-     FROM presupuestos
-   `;
+      SELECT
+        id,
+        Folio,
+        OficioRespuesta,
+        OficioDependencia,
+        Secretaria,
+        Dependencia,
+        TipoGasto,
+        Estatus,
+        Responsable,
+        ClaveTipoSolicitud,
+        TipoSolicitud,
+        DATE_FORMAT(FechaOficio, '%d/%m/%Y') AS FechaOficio,
+        DATE_FORMAT(FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
+        DATE_FORMAT(FechaElaboracion, '%d/%m/%Y') AS FechaElaboracion,
+        DATE_FORMAT(FechaVencimiento, '%d/%m/%Y') AS FechaVencimiento,
+        Monto,
+        MontoAmpliacion,
+        Comentarios,
+        DATE_FORMAT(FechaTurno, '%d/%m/%Y') AS FechaTurno,
+        ObservacionesEstatus,
+        DATE_FORMAT(FechaTurnada, '%d/%m/%Y') AS FechaTurnada,
+        DATE_FORMAT(FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
+        Anio
+      FROM presupuestos;
+    `;
   } else if (TIPO == 5 && BUSQUEDA !== "") {
-    sql = ` 
-    SELECT
-     id,
-     Folio,
-     OficioRespuesta,
-     OficioDependencia,
-     Secretaria,
-     Dependencia,
-     TipoGasto,
-     Estatus,
-     Responsable,
-     ClaveTipoSolicitud,
-     TipoSolicitud,
-     DATE_FORMAT( FechaOficio, '%d/%m/%Y') AS FechaOficio,
-     DATE_FORMAT( FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
-     DATE_FORMAT( FechaElaboracion, '%d/%m/%Y') AS FechaElaboracion,
-     DATE_FORMAT( FechaVencimiento, '%d/%m/%Y') AS FechaVencimiento,
-     Monto,
-     MontoAmpliacion,
-     Comentarios,
-     DATE_FORMAT( FechaTurno, '%d/%m/%Y') AS FechaTurno,
-     ObservacionesEstatus,
-     DATE_FORMAT( FechaTurnada, '%d/%m/%Y') AS FechaTurnada,
-     DATE_FORMAT( FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
-     Anio
-     FROM presupuestos
-  WHERE
-      UPPER(CONCAT_WS('|', Folio, OficioRespuesta, OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, ClaveTipoSolicitud, TipoSolicitud, ( FechaOficio), ( FechaRecepcion), ( FechaElaboracion), ( FechaVencimiento), Monto, MontoAmpliacion, Comentarios, ( FechaTurno), ObservacionesEstatus, ( FechaTurnada), ( FechaTerminada), Anio)) LIKE UPPER('%' || ? || '%');`;
+    sql = `
+      SELECT
+        id,
+        Folio,
+        OficioRespuesta,
+        OficioDependencia,
+        Secretaria,
+        Dependencia,
+        TipoGasto,
+        Estatus,
+        Responsable,
+        ClaveTipoSolicitud,
+        TipoSolicitud,
+        DATE_FORMAT(FechaOficio, '%d/%m/%Y') AS FechaOficio,
+        DATE_FORMAT(FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
+        DATE_FORMAT(FechaElaboracion, '%d/%m/%Y') AS FechaElaboracion,
+        DATE_FORMAT(FechaVencimiento, '%d/%m/%Y') AS FechaVencimiento,
+        Monto,
+        MontoAmpliacion,
+        Comentarios,
+        DATE_FORMAT(FechaTurno, '%d/%m/%Y') AS FechaTurno,
+        ObservacionesEstatus,
+        DATE_FORMAT(FechaTurnada, '%d/%m/%Y') AS FechaTurnada,
+        DATE_FORMAT(FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
+        Anio
+      FROM presupuestos
+      WHERE
+        UPPER(Folio) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(OficioRespuesta) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(OficioDependencia) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Secretaria) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Dependencia) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(TipoGasto) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Estatus) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Responsable) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(ClaveTipoSolicitud) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(TipoSolicitud) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaOficio, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaRecepcion, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaElaboracion, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaVencimiento, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(FORMAT(Monto, 2)) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(FORMAT(MontoAmpliacion, 2)) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Comentarios) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaTurno, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(ObservacionesEstatus) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaTurnada, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaTerminada, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Anio) LIKE UPPER(CONCAT('%', ?, '%'));
+    `;
 
-    // Define los parámetros de búsqueda
-    const parametro_busqueda = Array(1).fill(BUSQUEDA);
-    params = parametro_busqueda;
+    // Define los parámetros de búsqueda, 22 campos en total
+    params = Array(22).fill(BUSQUEDA);
   }
 
-  const rows = await uil.executeQuery(sql, params);
+  try {
+    const rows = await uil.executeQuery(sql, params);
 
-  if (rows.length > 0) {
-    res
-      .status(200)
-      .json({ message: "Data retrieved successfully", datos: rows });
-  } else {
-    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+    if (rows.length > 0) {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: rows });
+    } else {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: [] });
+    }
+  } catch (error) {
+    console.error("Error retrieving data:", error.message);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
 app.post("/transferencias", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
-  let params = {};
+  let params = [];
 
   if (TIPO == 4) {
     sql = `
-       SELECT 
-	          id,
-	          Anio,
-	          Folio,
-	          OficioDependencia,
-	          Secretaria,
-	          Dependencia,
-	          TipoGasto,
-	          Estatus,
-	          Responsable,
-	          TipoSolicitud,
-	          DATE_FORMAT(FechaOficio , '%d/%m/%Y') as FechaOficio,
-	          DATE_FORMAT(FechaRecepcion , '%d/%m/%Y' )as  FechaRecepcion ,
-	          Monto,
-	          Comentarios,
-	          AsignadoDependencia,
-	          TramitadoDAMOP,
-	          DATE_FORMAT(FechaCapturada , '%d/%m/%Y') as FechaCapturada,
-	          ObservacionesCapturada,
-	          ObservacionesTurnada,
-	          DATE_FORMAT(FechaStanBy , '%d/%m/%Y') as FechaStanBy,
-	          ObservacionesStandBy,
-	          DATE_FORMAT(FechaTerminada , '%d/%m/%Y') as FechaTerminada ,
-	          ObservacionesTerminada
-      FROM transferencias
-   `;
+      SELECT 
+        id,
+        Anio,
+        Folio,
+        OficioDependencia,
+        Secretaria,
+        Dependencia,
+        TipoGasto,
+        Estatus,
+        Responsable,
+        TipoSolicitud,
+        DATE_FORMAT(FechaOficio, '%d/%m/%Y') AS FechaOficio,
+        DATE_FORMAT(FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
+        Monto,
+        Comentarios,
+        AsignadoDependencia,
+        TramitadoDAMOP,
+        DATE_FORMAT(FechaCapturada, '%d/%m/%Y') AS FechaCapturada,
+        ObservacionesCapturada,
+        ObservacionesTurnada,
+        DATE_FORMAT(FechaStanBy, '%d/%m/%Y') AS FechaStanBy,
+        ObservacionesStandBy,
+        DATE_FORMAT(FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
+        ObservacionesTerminada
+      FROM transferencias;
+    `;
   } else if (TIPO == 5 && BUSQUEDA !== "") {
     sql = `
-    
-       SELECT 
-	          id,
-	          Anio,
-	          Folio,
-	          OficioDependencia,
-	          Secretaria,
-	          Dependencia,
-	          TipoGasto,
-	          Estatus,
-	          Responsable,
-	          TipoSolicitud,
-	          DATE_FORMAT(FechaOficio , '%d/%m/%Y') as FechaOficio,
-	          DATE_FORMAT(FechaRecepcion , '%d/%m/%Y' )as  FechaRecepcion ,
-	          Monto,
-	          Comentarios,
-	          AsignadoDependencia,
-	          TramitadoDAMOP,
-	          DATE_FORMAT(FechaCapturada , '%d/%m/%Y') as FechaCapturada,
-	          ObservacionesCapturada,
-	          ObservacionesTurnada,
-	          DATE_FORMAT(FechaStanBy , '%d/%m/%Y') as FechaStanBy,
-	          ObservacionesStandBy,
-	          DATE_FORMAT(FechaTerminada , '%d/%m/%Y') as FechaTerminada ,
-	          ObservacionesTerminada
+      SELECT 
+        id,
+        Anio,
+        Folio,
+        OficioDependencia,
+        Secretaria,
+        Dependencia,
+        TipoGasto,
+        Estatus,
+        Responsable,
+        TipoSolicitud,
+        DATE_FORMAT(FechaOficio, '%d/%m/%Y') AS FechaOficio,
+        DATE_FORMAT(FechaRecepcion, '%d/%m/%Y') AS FechaRecepcion,
+        Monto,
+        Comentarios,
+        AsignadoDependencia,
+        TramitadoDAMOP,
+        DATE_FORMAT(FechaCapturada, '%d/%m/%Y') AS FechaCapturada,
+        ObservacionesCapturada,
+        ObservacionesTurnada,
+        DATE_FORMAT(FechaStanBy, '%d/%m/%Y') AS FechaStanBy,
+        ObservacionesStandBy,
+        DATE_FORMAT(FechaTerminada, '%d/%m/%Y') AS FechaTerminada,
+        ObservacionesTerminada
       FROM transferencias
-        WHERE
-        UPPER(CONCAT_WS('|', Folio,  OficioDependencia, Secretaria, Dependencia, TipoGasto, Estatus, Responsable, TipoSolicitud, FechaOficio, FechaRecepcion,   Monto,  Comentarios,    FechaTerminada, Anio)) LIKE UPPER('%' || ? || '%');
+      WHERE
+        UPPER(Folio) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(OficioDependencia) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Secretaria) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Dependencia) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(TipoGasto) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Estatus) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Responsable) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(TipoSolicitud) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaOficio, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaRecepcion, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(FORMAT(Monto, 2)) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Comentarios) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaStanBy, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(DATE_FORMAT(FechaTerminada, '%d/%m/%Y')) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(Anio) LIKE UPPER(CONCAT('%', ?, '%'));
+    `;
 
-      `;
-
-    // Define los parámetros de búsqueda
-    const parametro_busqueda = Array(1).fill(BUSQUEDA);
-    params = parametro_busqueda;
+    // Define los parámetros de búsqueda, 16 campos en total
+    params = Array(16).fill(BUSQUEDA);
   }
 
-  const rows = await uil.executeQuery(sql, params);
+  try {
+    console.log(sql);
+    const rows = await uil.executeQuery(sql, params);
 
-  if (rows.length > 0) {
-    res
-      .status(200)
-      .json({ message: "Data retrieved successfully", datos: rows });
-  } else {
-    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+    if (rows.length > 0) {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: rows });
+    } else {
+      res
+        .status(200)
+        .json({ message: "Data retrieved successfully", datos: [] });
+    }
+  } catch (error) {
+    console.error("Error retrieving data:", error.message);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -720,10 +771,10 @@ app.post("/onu", async (req, res) => {
         MontoConvenio
        FROM onu
          WHERE
-         UPPER(FechaConvenio) LIKE '%' || UPPER(?) || '%'
-         OR UPPER(NombreConvenio) LIKE '%' || UPPER(?) || '%'
-         OR UPPER(ObjetivoConvenio) LIKE '%' || UPPER(?) || '%'
-         OR UPPER(MontoConvenio) LIKE '%' || UPPER(?) || '%'
+         UPPER(FechaConvenio) LIKE UPPER(CONCAT('%', ?, '%'))
+         OR UPPER(NombreConvenio) LIKE UPPER(CONCAT('%', ?, '%'))
+         OR UPPER(ObjetivoConvenio) LIKE UPPER(CONCAT('%', ?, '%'))
+         OR UPPER(MontoConvenio) LIKE UPPER(CONCAT('%', ?, '%'))
        `;
     // Define los parámetros de búsqueda
     const parametro_busqueda = Array(4).fill(BUSQUEDA);
