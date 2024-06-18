@@ -6,14 +6,13 @@ import Busqueda from "./pages/Busqueda/Busqueda";
 import Home from "./pages/Home";
 import Inap from "./pages/INAP/Inap";
 import MPD from "./pages/MPD/MPD";
+import OficioONU from "./pages/OficiosONU/OficioONU";
 import OficioPresupuesto from "./pages/OficiosPresupuesto/OficioPresupuesto";
 import PaqueteFiscal from "./pages/PaqueteFiscal/PaqueteFiscal";
 import PPI from "./pages/ProyectoInversion/PPI";
 import SIREGOB from "./pages/SIREGOB/SIREGOB";
 import SignIn from "./pages/SignIn";
-import OficioONU from "./pages/OficiosONU/OficioONU";
 import Transferencias from "./pages/Trasnsferencias/Transferencias";
-import Capital from "./pages/polizas/Capital";
 import Corriente from "./pages/polizas/Corriente";
 
 function App() {
@@ -41,7 +40,6 @@ function App() {
               element={<OficioPresupuesto tipo={"CONS"} />}
             />
 
-            <Route path="gasto-capital" element={<Capital tipo={"CONS"} />} />
             <Route
               path="gasto-corriente"
               element={<Corriente tipo={"CONS"} />}

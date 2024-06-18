@@ -461,19 +461,18 @@ app.post("/PPI", async (req, res) => {
   FROM 
       ppi
   WHERE
-      UPPER(Anio) LIKE UPPER('%' || ? || '%')
-      OR UPPER(Noficio) LIKE UPPER('%' || ? || '%')
-      OR UPPER(( Fecha)) LIKE UPPER('%' || ? || '%')
-      OR UPPER(TipoOficio) LIKE UPPER('%' || ? || '%')
-      OR UPPER(Dependencia) LIKE UPPER('%' || ? || '%')
-      OR UPPER(Descripcion) LIKE UPPER('%' || ? || '%')
-      OR UPPER(Importe) LIKE UPPER('%' || ? || '%');`;
+      UPPER(Anio) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(Noficio) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(TipoOficio) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(Dependencia) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(Descripcion) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(Importe) LIKE UPPER(CONCAT('%', ?, '%'))
+`;
     // Define los parámetros de búsqueda
-    const parametro_busqueda = Array(7).fill(BUSQUEDA);
+    const parametro_busqueda = Array(6).fill(BUSQUEDA);
     params = parametro_busqueda;
   }
   const rows = await uil.executeQuery(sql, params);
-
   if (rows.length > 0) {
     res
       .status(200)
@@ -524,31 +523,6 @@ app.post("/PF", async (req, res) => {
   }
 });
 
-app.post("/gastocapital", async (req, res) => {
-  const { TIPO, BUSQUEDA } = req.body;
-  let sql;
-  let params = {};
-
-  if (TIPO == 4) {
-    sql = `
-      SELECT * FROM polizas WHERE Texto LIKE '%GASTO CAPITAL%';
-   `;
-  } else if (TIPO == 5 && BUSQUEDA !== "") {
-    sql = `
-      SELECT * FROM pf
-   `;
-  }
-  const rows = await uil.executeQuery(sql, params);
-
-  if (rows.length > 0) {
-    res
-      .status(200)
-      .json({ message: "Data retrieved successfully", datos: rows });
-  } else {
-    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
-  }
-});
-
 app.post("/gastocorriente", async (req, res) => {
   const { TIPO, BUSQUEDA } = req.body;
   let sql;
@@ -561,7 +535,13 @@ app.post("/gastocorriente", async (req, res) => {
   } else if (TIPO == 5 && BUSQUEDA !== "") {
     sql = `
      SELECT * FROM polizas
+     WHERE
+        UPPER(sp) LIKE UPPER(CONCAT('%', ?, '%'))
+        OR UPPER(texto) LIKE UPPER(CONCAT('%', ?, '%'))
    `;
+
+    // Define los parámetros de búsqueda, 22 campos en total
+    params = Array(2).fill(BUSQUEDA);
   }
   const rows = await uil.executeQuery(sql, params);
 
@@ -739,6 +719,48 @@ app.post("/inapGral01All", async (req, res) => {
   WHERE inap01.Deleted =0
    `;
   const rows = await uil.executeQuery(sql, []);
+
+  if (rows.length > 0) {
+    res
+      .status(200)
+      .json({ message: "Data retrieved successfully", datos: rows });
+  } else {
+    res.status(200).json({ message: "Data retrieved successfully", datos: [] });
+  }
+});
+
+app.post("/inap", async (req, res) => {
+  const { TIPO, BUSQUEDA } = req.body;
+  let sql;
+  let params = {};
+  sql = `
+   SELECT inap1.id,
+       inap1.Clave as clavegeneral,
+       DATE_FORMAT( FechaConveniogrlfin, '%d/%m/%Y') AS FechaConveniogrlfin,
+       inap1.NombreConvenio as nombregeneral,
+       inap2.Clave,
+       DATE_FORMAT( FechaConvenioinicio, '%d/%m/%Y') AS FechaConvenioinicio,
+       DATE_FORMAT( FechaConveniofin, '%d/%m/%Y')AS FechaConveniofin,
+       Objetivo,
+       Monto,
+       DATE_FORMAT( FechaFiniquito, '%d/%m/%Y') AS FechaFiniquito,
+       inap2.NombreConvenio
+       FROM pladi.inap_gral inap1
+       INNER JOIN pladi.inap_gral_01 inap2 ON inap1.id = inap2.IdGral 
+       WHERE
+      UPPER(inap1.Clave) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(inap1.NombreConvenio) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(inap2.Clave) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(Objetivo) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(Monto) LIKE UPPER(CONCAT('%', ?, '%'))
+      OR UPPER(inap2.NombreConvenio) LIKE UPPER(CONCAT('%', ?, '%'))
+   `;
+
+  // Define los parámetros de búsqueda
+  const parametro_busqueda = Array(6).fill(BUSQUEDA);
+  params = parametro_busqueda;
+
+  const rows = await uil.executeQuery(sql, params);
 
   if (rows.length > 0) {
     res

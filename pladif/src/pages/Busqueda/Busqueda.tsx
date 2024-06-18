@@ -18,6 +18,7 @@ import OficioPresupuesto from "../OficiosPresupuesto/OficioPresupuesto";
 import PPI from "../ProyectoInversion/PPI";
 import SIREGOB from "../SIREGOB/SIREGOB";
 import Transferencias from "../Trasnsferencias/Transferencias";
+import Corriente from "../polizas/Corriente";
 const Busqueda = () => {
   const [idowner, setidowner] = useState<string>("");
   const [openModalFiles, setopenModalFiles] = useState(false);
@@ -43,7 +44,7 @@ const Busqueda = () => {
     };
 
     axios
-      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "inapGralAll", data)
+      .post(process.env.REACT_APP_APPLICATION_BASE_URL + "inap", data)
       .then((response) => {
         // Manejar la respuesta del servidor
         if (response.status == 200) {
@@ -110,12 +111,7 @@ const Busqueda = () => {
     {
       field: "clavegeneral",
       headerName: "Clave General",
-      width: 100,
-    },
-    {
-      field: "FechaConveniogrlinicio",
-      headerName: "Fecha Convenio Inicio",
-      width: 150,
+      width: 30,
     },
     {
       field: "FechaConveniogrlfin",
@@ -307,9 +303,9 @@ const Busqueda = () => {
             noWrap
             sx={{ flexGrow: 1, textAlign: "center" }}
           >
-            Oficios ONU
+            Solicitudes de Pago
           </Typography>
-          <OficioONU tipo={"BUS"} Busqueda={busqueda}></OficioONU>
+          <Corriente tipo={"BUS"} Busqueda={busqueda}></Corriente>
         </Grid>
       </Grid>
       <Grid
@@ -362,7 +358,18 @@ const Busqueda = () => {
           </Typography>
           <Transferencias tipo={"BUS"} Busqueda={busqueda}></Transferencias>
         </Grid>
-        <Grid border={1} item xs={6} sm={6} md={6} lg={6}></Grid>
+        <Grid border={1} item xs={6} sm={6} md={6} lg={6}>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="#000000"
+            noWrap
+            sx={{ flexGrow: 1, textAlign: "center" }}
+          >
+            Oficios ONU
+          </Typography>
+          <OficioONU tipo={"BUS"} Busqueda={busqueda}></OficioONU>
+        </Grid>
       </Grid>
 
       {openModalFiles ? (
