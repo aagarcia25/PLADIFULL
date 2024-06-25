@@ -1011,11 +1011,179 @@ function insertDataIntoDatabaseppi(data) {
   });
 }
 
+function insertDataIntoDatabaseAmpliaciones(data) {
+  return new Promise((resolve, reject) => {
+    const insertQuery = `
+      INSERT INTO presupuestos ( 
+      Anio,	Folio,	OficioRespuesta,	
+      OficioDependencia,	Secretaria	,Dependencia,	TipoGasto,	
+      Estatus	,Responsable	,TipoSolicitud	,FechaOficio	,FechaRecepcion,	
+      Monto,	Comentarios	,FechaTerminada
+      )
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `;
+
+    for (const row of data) {
+      //console.log(row);
+      const values = [
+        row.Anio,
+        row.Folio,
+        row.OficioRespuesta,
+        row.OficioDependencia,
+        row.Secretaria,
+        row.Dependencia,
+        row.TipoGasto,
+        row.Estatus,
+        row.Responsable,
+        row.TipoSolicitud,
+        row.FechaOficio
+          ? format(uil.excelDateToJSDate(row.FechaOficio), "yyyy-MM-dd")
+          : null,
+        row.FechaRecepcion
+          ? format(uil.excelDateToJSDate(row.FechaRecepcion), "yyyy-MM-dd")
+          : null,
+        row.Monto,
+        row.Comentarios,
+        row.FechaTerminada
+          ? format(uil.excelDateToJSDate(row.FechaTerminada), "yyyy-MM-dd")
+          : null,
+      ];
+
+      db_connect.query(insertQuery, values, (err) => {
+        if (err) {
+          return reject(err);
+        }
+      });
+    }
+    resolve();
+  });
+}
+
+function insertDataIntoDatabaseAuditorias(data) {
+  return new Promise((resolve, reject) => {
+    const insertQuery = `
+      INSERT INTO auditoria ( 
+      Folio,	NumOficioContestacion	,OficioDependencia,	Secretaria,
+      Dependencia	,TipoGasto,	Responsable	,TipoSolicitud	,FechaOficio,
+      FechaRecepcion,	FechaElaboracion,	FechaVencimiento,	Monto	,
+      Comentarios,	FechaTurno	,ObservacionesEstatus,	FechaTurnada,	FechaTerminada,	ObsTerminada
+      )
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `;
+
+    for (const row of data) {
+      //console.log(row);
+      const values = [
+        row.Folio,
+        row.NumOficioContestacion,
+        row.OficioDependencia,
+        row.Secretaria,
+        row.Dependencia,
+        row.TipoGasto,
+        row.Responsable,
+        row.TipoSolicitud,
+        row.FechaOficio
+          ? format(uil.excelDateToJSDate(row.FechaOficio), "yyyy-MM-dd")
+          : null,
+        row.FechaRecepcion
+          ? format(uil.excelDateToJSDate(row.FechaRecepcion), "yyyy-MM-dd")
+          : null,
+        row.FechaElaboracion
+          ? format(uil.excelDateToJSDate(row.FechaElaboracion), "yyyy-MM-dd")
+          : null,
+        row.FechaVencimiento
+          ? format(uil.excelDateToJSDate(row.FechaVencimiento), "yyyy-MM-dd")
+          : null,
+        row.Monto,
+        row.Comentarios,
+        row.FechaTurno
+          ? format(uil.excelDateToJSDate(row.FechaTurno), "yyyy-MM-dd")
+          : null,
+
+        row.ObservacionesEstatus,
+        row.FechaTurnada
+          ? format(uil.excelDateToJSDate(row.FechaTurnada), "yyyy-MM-dd")
+          : null,
+        row.FechaTerminada
+          ? format(uil.excelDateToJSDate(row.FechaTerminada), "yyyy-MM-dd")
+          : null,
+        row.ObsTerminada,
+      ];
+
+      db_connect.query(insertQuery, values, (err) => {
+        if (err) {
+          return reject(err);
+        }
+      });
+    }
+    resolve();
+  });
+}
+
+function insertDataIntoDatabaseTransferencia(data) {
+  return new Promise((resolve, reject) => {
+    const insertQuery = `
+      INSERT INTO transferencias ( 
+      Anio,	Folio,	OficioDependencia	,Secretaria,	Dependencia,	TipoGasto,	Estatus	,Responsable	,
+      TipoSolicitud	,FechaOficio	,FechaRecepcion	,Monto	,Comentarios,	AsignadoDependencia,	TramitadoDAMOP,	FechaCapturada,
+      	ObservacionesCapturada,	ObservacionesTurnada	,FechaStanBy	,ObservacionesStandBy,	FechaTerminada	,ObservacionesTerminada
+      )
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `;
+
+    for (const row of data) {
+      //console.log(row);
+      const values = [
+        row.Anio,
+        row.Folio,
+        row.OficioDependencia,
+        row.Secretaria,
+        row.Dependencia,
+        row.TipoGasto,
+        row.Estatus,
+        row.Responsable,
+        row.TipoSolicitud,
+        row.FechaOficio
+          ? format(uil.excelDateToJSDate(row.FechaOficio), "yyyy-MM-dd")
+          : null,
+        row.FechaRecepcion
+          ? format(uil.excelDateToJSDate(row.FechaRecepcion), "yyyy-MM-dd")
+          : null,
+        row.Monto,
+        row.Comentarios,
+        row.AsignadoDependencia,
+        row.TramitadoDAMOP,
+        row.FechaCapturada,
+        row.ObservacionesCapturada,
+        row.ObservacionesTurnada,
+        row.FechaStanBy
+          ? format(uil.excelDateToJSDate(row.FechaStanBy), "yyyy-MM-dd")
+          : null,
+        row.ObservacionesStandBy,
+        row.FechaTerminada
+          ? format(uil.excelDateToJSDate(row.FechaTerminada), "yyyy-MM-dd")
+          : null,
+        row.ObservacionesTerminada,
+      ];
+
+      db_connect.query(insertQuery, values, (err) => {
+        if (err) {
+          return reject(err);
+        }
+      });
+    }
+    resolve();
+  });
+}
+
 // Ruta para manejar la subida del archivo Excel
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
     // Obtener el buffer del archivo subido
     const buffer = req.file.buffer;
+    if (!req.body.tipo) {
+      return res.status(200).json({ message: "No se encontro el tipo" });
+    }
 
     // Leer el contenido del buffer usando xlsx
     const workbook = xlsx.read(buffer, { type: "buffer" });
@@ -1023,10 +1191,21 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     const sheet = workbook.Sheets[sheetName];
     const data = xlsx.utils.sheet_to_json(sheet);
 
+    if (req.body.tipo == "AMPLIACIONES") {
+      await insertDataIntoDatabaseAmpliaciones(data);
+    } else if (req.body.tipo == "AUDITORIA") {
+      await insertDataIntoDatabaseAuditorias(data);
+    } else if (req.body.tipo == "TRASNFERENCIAS") {
+      await insertDataIntoDatabaseTransferencia(data);
+    } else {
+      return res
+        .status(200)
+        .json({ message: "No se encontro el tipo  " + req.body.tipo });
+    }
     //await insertDataIntoDatabaseTransferencias(data);
     //await insertDataIntoDatabaseppi(data);
-    await insertDataIntoDatabasePolizas(data);
-    res.status(200).json({ message: "Data inserted successfully" });
+    //await insertDataIntoDatabasePolizas(data);
+    res.status(200).json({ message: "MIGRACIÓN DE  " + req.body.tipo });
   } catch (error) {
     console.error("Error processing file:", error);
     res.status(500).json({ error: "Internal server error" });

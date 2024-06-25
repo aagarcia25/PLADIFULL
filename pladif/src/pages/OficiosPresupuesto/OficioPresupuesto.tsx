@@ -74,7 +74,7 @@ const OficioPresupuesto = ({
       },
     },
     { field: "Anio", headerName: "Ejercicio", width: 100 },
-    // { field: "Folio", headerName: "Folio", width: 120 },
+    { field: "Folio", headerName: "Folio", width: 120 },
     { field: "OficioRespuesta", headerName: "Oficio de Respuesta", width: 200 },
     {
       field: "OficioDependencia",
@@ -94,34 +94,12 @@ const OficioPresupuesto = ({
     { field: "TipoSolicitud", headerName: "Tipo de Solicitud", width: 200 },
     { field: "FechaOficio", headerName: "Fecha del Oficio", width: 150 },
     { field: "FechaRecepcion", headerName: "Fecha de Recepcion", width: 150 },
-    // {
-    //   field: "FechaElaboracion",
-    //   headerName: "Fecha de Elaboracion",
-    //   width: 180,
-    // },
-    // {
-    //   field: "FechaVencimiento",
-    //   headerName: "Fecha de Vencimiento",
-    //   width: 180,
-    // },
     {
       field: "Monto",
       headerName: "Monto",
       width: 120,
     },
-    // {
-    //   field: "MontoAmpliacion",
-    //   headerName: "Monto de Ampliacion",
-    //   width: 180,
-    // },
     { field: "Comentarios", headerName: "Comentarios", width: 500 },
-    // { field: "FechaTurno", headerName: "Fecha en que se Turno", width: 200 },
-    // {
-    //   field: "ObservacionesEstatus",
-    //   headerName: "Observaciones del Estatus",
-    //   width: 200,
-    // },
-    // { field: "FechaTurnada", headerName: "Fecha Turnada", width: 150 },
     { field: "FechaTerminada", headerName: "Fecha Terminada", width: 150 },
   ];
 
