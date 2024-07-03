@@ -988,7 +988,6 @@ function insertDataIntoDatabaseppi(data) {
     `;
 
     for (const row of data) {
-      print(row);
       const values = [
         row.Anio,
         row.Noficio,
@@ -1197,6 +1196,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       await insertDataIntoDatabaseAuditorias(data);
     } else if (req.body.tipo == "TRASNFERENCIAS") {
       await insertDataIntoDatabaseTransferencia(data);
+     } else if (req.body.tipo == "PPI") {
+      await insertDataIntoDatabaseppi(data);  
     } else {
       return res
         .status(200)
