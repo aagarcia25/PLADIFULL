@@ -6,7 +6,7 @@
     "server": "index.js"
   },
   "scripts": {
-    "start": "node --max-old-space-size=8192 node_modules/.bin/nodemon index.js"
+    "start": "nodemon --max-old-space-size=8192  index.js"
   },
   "keywords": [],
   "author": "",
