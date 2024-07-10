@@ -527,15 +527,18 @@ app.post("/gastocorriente", async (req, res) => {
   const { TIPO, BUSQUEDA,ANIO } = req.body;
   let sql;
   let params = {};
-
+  console.log("ANIO: ",ANIO);
+  //where añoPliza = ?
   if (TIPO == 4) {
     sql = `
-     SELECT * FROM polizas where 
-      UPPER(Archivo) LIKE UPPER(CONCAT('%', ?, '%'))
+     SELECT * FROM polizas
+      where 
+      UPPER(anioPoliza) = UPPER(CONCAT('%', ?, '%'))
       and Texto <> ''
       and Archivo <> ''
    `;
     params = Array(1).fill(ANIO);
+    console.log("params: ",params);
   } else if (TIPO == 5 && BUSQUEDA !== "") {
     sql = `
      SELECT * FROM polizas
@@ -545,10 +548,7 @@ app.post("/gastocorriente", async (req, res) => {
        and(
         UPPER(sp) LIKE UPPER(CONCAT('%', ?, '%'))
         OR UPPER(texto) LIKE UPPER(CONCAT('%', ?, '%'))
-       )
-       
-       
-   `;
+       )`;
 
     // Define los parámetros de búsqueda, 22 campos en total
     params = Array(2).fill(BUSQUEDA);
@@ -902,13 +902,15 @@ app.post("/getFileByRoute", async (req, res) => {
     }
     const filePath = `${req.body.P_ROUTE}`;
     const fileContent = await fs2.readFile(filePath, { encoding: "base64" });
-
+    console.log("filePath: ",filePath);
+    console.log("fileContent: ",fileContent);
     const responseData = uil.buildResponse(
       { FILE: fileContent, TIPO: ".pdf" },
       true,
       200,
       "Exito"
     );
+    console.log("responseData: ",responseData);
     res.status(200).json(responseData);
   } catch (error) {
     const responseData = uil.buildResponse(null, false, 500, error.message);

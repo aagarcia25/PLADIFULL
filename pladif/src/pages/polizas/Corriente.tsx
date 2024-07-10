@@ -25,7 +25,10 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       NUMOPERACION: 5,
       P_ROUTE: v.row.Archivo.replace("\\\\", "\\"),
     };
-
+    console.log("v: ",v);
+    
+    console.log("data:", data);
+    
     axios
       .post(process.env.REACT_APP_APPLICATION_BASE_URL + "getFileByRoute", data)
       .then((response) => {
@@ -104,6 +107,7 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       BUSQUEDA: Busqueda,
       ANIO: anio,
     };
+console.log("data2: ",data);
 
     axios
       .post(process.env.REACT_APP_APPLICATION_BASE_URL + "gastocorriente", data)
@@ -153,7 +157,7 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={age}
-          label="Age"
+          label="AÑO"
           onChange={handleChange}
         >
           <MenuItem value={2016}>2016</MenuItem>
