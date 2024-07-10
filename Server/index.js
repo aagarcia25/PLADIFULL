@@ -532,14 +532,22 @@ app.post("/gastocorriente", async (req, res) => {
     sql = `
      SELECT * FROM polizas where 
       UPPER(Archivo) LIKE UPPER(CONCAT('%', ?, '%'))
+      and Texto <> ''
+      and Archivo <> ''
    `;
     params = Array(1).fill(ANIO);
   } else if (TIPO == 5 && BUSQUEDA !== "") {
     sql = `
      SELECT * FROM polizas
      WHERE
+       and Texto <> ''
+       and Archivo <> '' 
+       and(
         UPPER(sp) LIKE UPPER(CONCAT('%', ?, '%'))
         OR UPPER(texto) LIKE UPPER(CONCAT('%', ?, '%'))
+       )
+       
+       
    `;
 
     // Define los parámetros de búsqueda, 22 campos en total
