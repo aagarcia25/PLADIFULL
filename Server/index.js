@@ -531,7 +531,7 @@ app.post("/gastocorriente", async (req, res) => {
   if (TIPO == 4) {
     sql = `
      SELECT * FROM polizas where 
-      UPPER(Archivo) LIKE UPPER(CONCAT('%', ?, '%'))
+      UPPER(anioPoliza) = UPPER(CONCAT('%', ?, '%'))
       and Texto <> ''
       and Archivo <> ''
    `;
