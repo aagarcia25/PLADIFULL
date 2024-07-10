@@ -9,6 +9,7 @@ import ModalForm from "../../share/ModalForm";
 import MsgAlert from "../../share/MsgAlert";
 import Progress from "../../share/Progress";
 import { base64ToArrayBuffer } from "../../utils/Files";
+import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   const [openModalFiles, setopenModalFiles] = useState(false);
   const [open, setopen] = useState(false);
@@ -95,12 +96,13 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     },
   ];
 
-  const ProcesaData = (tipo: number, id?: string) => {
+  const ProcesaData = (tipo: number, id?: string, anio?: string) => {
     setopen(true);
     let data = {
       TIPO: tipo,
       P_Id: id,
       BUSQUEDA: Busqueda,
+      ANIO: anio,
     };
 
     axios
@@ -125,9 +127,18 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       });
   };
 
+  const [age, setAge] = useState('');
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setAge(event.target.value as string);
+
+    ProcesaData(4, '', event.target.value);
+  };
+
+
   useEffect(() => {
     if (tipo == "CONS") {
-      ProcesaData(4);
+      //ProcesaData(4);
     } else if (tipo == "BUS" && Busqueda != "") {
       ProcesaData(5);
     }
@@ -135,6 +146,29 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   return (
     <div>
       <Progress open={open}></Progress>
+
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">AÑO</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={age}
+          label="Age"
+          onChange={handleChange}
+        >
+          <MenuItem value={2016}>2016</MenuItem>
+          <MenuItem value={2017}>2017</MenuItem>
+          <MenuItem value={2018}>2018</MenuItem>
+          <MenuItem value={2019}>2019</MenuItem>
+          <MenuItem value={2020}>2020</MenuItem>
+          <MenuItem value={2021}>2021</MenuItem>
+          <MenuItem value={2022}>2022</MenuItem>
+          <MenuItem value={2023}>2023</MenuItem>
+          <MenuItem value={2024}>2024</MenuItem>
+
+        </Select>
+      </FormControl>
+
       <MUIXDataGrid columns={columns} rows={rows} />
 
       {openModalFiles ? (
