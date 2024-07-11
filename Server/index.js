@@ -532,7 +532,7 @@ app.post("/gastocorriente", async (req, res) => {
     sql = `
        SELECT * 
         FROM polizas
-        WHERE AnioEspecifico LIKE ?
+        WHERE AnioEspecifico LIKE UPPER(CONCAT('%', ?, '%'))
       `;
     params = Array(1).fill(ANIO);
     console.log("params: ",params);
