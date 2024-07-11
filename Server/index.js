@@ -524,19 +524,16 @@ app.post("/PF", async (req, res) => {
 });
 
 app.post("/gastocorriente", async (req, res) => {
-  const { TIPO, BUSQUEDA,ANIO } = req.body;
+  const { TIPO, BUSQUEDA, ANIO } = req.body;
   let sql;
   let params = {};
   console.log("ANIO: ",ANIO);
-  //where añoPliza = ?
   if (TIPO == 4) {
     sql = `
-     SELECT * FROM polizas
-      where 
-      UPPER(anioPoliza) = UPPER(CONCAT('%', ?, '%'))
-      and Texto <> ''
-      and Archivo <> ''
-   `;
+       SELECT * 
+        FROM polizas
+        WHERE AnioEspecifico LIKE ?
+      `;
     params = Array(1).fill(ANIO);
     console.log("params: ",params);
   } else if (TIPO == 5 && BUSQUEDA !== "") {
@@ -1208,8 +1205,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       await insertDataIntoDatabaseAuditorias(data);
     } else if (req.body.tipo == "TRASNFERENCIAS") {
       await insertDataIntoDatabaseTransferencia(data);
-     } else if (req.body.tipo == "PPI") {
-      await insertDataIntoDatabaseppi(data);  
+    } else if (req.body.tipo == "PPI") {
+      await insertDataIntoDatabaseppi(data);
     } else {
       return res
         .status(200)
