@@ -899,15 +899,13 @@ app.post("/getFileByRoute", async (req, res) => {
     }
     const filePath = `${req.body.P_ROUTE}`;
     const fileContent = await fs2.readFile(filePath, { encoding: "base64" });
-    console.log("filePath: ",filePath);
-    console.log("fileContent: ",fileContent);
     const responseData = uil.buildResponse(
       { FILE: fileContent, TIPO: ".pdf" },
       true,
       200,
       "Exito"
     );
-    console.log("responseData: ",responseData);
+
     res.status(200).json(responseData);
   } catch (error) {
     const responseData = uil.buildResponse(null, false, 500, error.message);
