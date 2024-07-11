@@ -524,18 +524,18 @@ app.post("/PF", async (req, res) => {
 });
 
 app.post("/gastocorriente", async (req, res) => {
-  const { TIPO, BUSQUEDA,ANIO } = req.body;
+  const { TIPO, BUSQUEDA, ANIO } = req.body;
   let sql;
   let params = {};
-
+  console.log("ANIO: ",ANIO);
   if (TIPO == 4) {
     sql = `
-     SELECT * FROM polizas where 
-      UPPER(anioPoliza) = UPPER(CONCAT('%', ?, '%'))
-      and Texto <> ''
-      and Archivo <> ''
-   `;
+       SELECT * 
+        FROM polizas
+        WHERE AnioEspecifico LIKE UPPER(CONCAT('%', ?, '%'))
+      `;
     params = Array(1).fill(ANIO);
+    console.log("params: ",params);
   } else if (TIPO == 5 && BUSQUEDA !== "") {
     sql = `
      SELECT * FROM polizas
@@ -545,10 +545,7 @@ app.post("/gastocorriente", async (req, res) => {
        and(
         UPPER(sp) LIKE UPPER(CONCAT('%', ?, '%'))
         OR UPPER(texto) LIKE UPPER(CONCAT('%', ?, '%'))
-       )
-       
-       
-   `;
+       )`;
 
     // Define los parámetros de búsqueda, 22 campos en total
     params = Array(2).fill(BUSQUEDA);
@@ -902,13 +899,15 @@ app.post("/getFileByRoute", async (req, res) => {
     }
     const filePath = `${req.body.P_ROUTE}`;
     const fileContent = await fs2.readFile(filePath, { encoding: "base64" });
-
+    console.log("filePath: ",filePath);
+    console.log("fileContent: ",fileContent);
     const responseData = uil.buildResponse(
       { FILE: fileContent, TIPO: ".pdf" },
       true,
       200,
       "Exito"
     );
+    console.log("responseData: ",responseData);
     res.status(200).json(responseData);
   } catch (error) {
     const responseData = uil.buildResponse(null, false, 500, error.message);
@@ -1206,8 +1205,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       await insertDataIntoDatabaseAuditorias(data);
     } else if (req.body.tipo == "TRASNFERENCIAS") {
       await insertDataIntoDatabaseTransferencia(data);
-     } else if (req.body.tipo == "PPI") {
-      await insertDataIntoDatabaseppi(data);  
+    } else if (req.body.tipo == "PPI") {
+      await insertDataIntoDatabaseppi(data);
     } else {
       return res
         .status(200)

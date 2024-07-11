@@ -9,7 +9,15 @@ import ModalForm from "../../share/ModalForm";
 import MsgAlert from "../../share/MsgAlert";
 import Progress from "../../share/Progress";
 import { base64ToArrayBuffer } from "../../utils/Files";
-import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  Grid,
+} from "@mui/material";
 const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
   const [openModalFiles, setopenModalFiles] = useState(false);
   const [open, setopen] = useState(false);
@@ -25,7 +33,10 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       NUMOPERACION: 5,
       P_ROUTE: v.row.Archivo.replace("\\\\", "\\"),
     };
-
+    console.log("v: ",v);
+    
+    console.log("data:", data);
+    
     axios
       .post(process.env.REACT_APP_APPLICATION_BASE_URL + "getFileByRoute", data)
       .then((response) => {
@@ -104,6 +115,7 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       BUSQUEDA: Busqueda,
       ANIO: anio,
     };
+console.log("data2: ",data);
 
     axios
       .post(process.env.REACT_APP_APPLICATION_BASE_URL + "gastocorriente", data)
@@ -127,14 +139,35 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
       });
   };
 
-  const [age, setAge] = useState('');
+  const [Año, setAño] = useState("");
+  const [mes, setMes] = useState("");
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
+    setAño(
+      String(event.target.value)
+      //   .replace("", "Sin texto") || "Sin texto"
+      // .replaceAll('"', "")
+      // .replaceAll("'", "")
+      // .replaceAll("\n", "")
+    );
 
-    ProcesaData(4, '', event.target.value);
+    // ProcesaData(4, "", event.target.value);
   };
 
+  const añoCompleto = (event: SelectChangeEvent) => {
+    setMes(
+      String(event.target.value)
+      //   .replace("", "Sin texto") || "Sin texto"
+      // .replaceAll('"', "")
+      // .replaceAll("'", "")
+      // .replaceAll("\n", "")
+    );
+
+    console.log(Año + String(event.target.value));
+    let año_completo = Año + "-" + String(event.target.value);
+    console.log(año_completo);
+    ProcesaData(4, "", año_completo);
+  };
 
   useEffect(() => {
     if (tipo == "CONS") {
@@ -147,27 +180,59 @@ const Corriente = ({ tipo, Busqueda }: { tipo: string; Busqueda?: string }) => {
     <div>
       <Progress open={open}></Progress>
 
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">AÑO</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={age}
-          label="Age"
-          onChange={handleChange}
-        >
-          <MenuItem value={2016}>2016</MenuItem>
-          <MenuItem value={2017}>2017</MenuItem>
-          <MenuItem value={2018}>2018</MenuItem>
-          <MenuItem value={2019}>2019</MenuItem>
-          <MenuItem value={2020}>2020</MenuItem>
-          <MenuItem value={2021}>2021</MenuItem>
-          <MenuItem value={2022}>2022</MenuItem>
-          <MenuItem value={2023}>2023</MenuItem>
-          <MenuItem value={2024}>2024</MenuItem>
+      <Grid item container mb={2}>
+        <Grid xl={6}>
+          <FormControl sx={{ width: "90%" }}>
+            <InputLabel id="demo-simple-select-label">AÑO</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={Año}
+              label="Año"
+              onChange={handleChange}
+            >
+              {/* <MenuItem value={2016}>2016</MenuItem>
+              <MenuItem value={2017}>2017</MenuItem>
+              <MenuItem value={2018}>2018</MenuItem> */}
+              <MenuItem value={2019}>2019</MenuItem>
+              <MenuItem value={2020}>2020</MenuItem>
+              <MenuItem value={2021}>2021</MenuItem>
+              <MenuItem value={2022}>2022</MenuItem>
+              <MenuItem value={2023}>2023</MenuItem>
+              <MenuItem value={2024}>2024</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
 
-        </Select>
-      </FormControl>
+        <Grid xl={6}>
+          
+          <Tooltip title="Seleccione un año para elegir el mes">
+            <FormControl disabled={!Año} sx={{ width: "90%" }}>
+              <InputLabel id="demo-simple-select-label">Mes</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={mes}
+                label="Mes"
+                onChange={añoCompleto}
+              >
+                <MenuItem value="01">Enero</MenuItem>
+                <MenuItem value="02">Febrero</MenuItem>
+                <MenuItem value="03">Marzo</MenuItem>
+                <MenuItem value="04">Abril</MenuItem>
+                <MenuItem value="05">Mayo</MenuItem>
+                <MenuItem value="06">Junio</MenuItem>
+                <MenuItem value="07">Julio</MenuItem>
+                <MenuItem value="08">Agosto</MenuItem>
+                <MenuItem value="09">Septiembre</MenuItem>
+                <MenuItem value="10">Octubre</MenuItem>
+                <MenuItem value="11">Noviembre</MenuItem>
+                <MenuItem value="12">Diciembre</MenuItem>
+              </Select>
+            </FormControl>
+          </Tooltip>
+        </Grid>
+      </Grid>
 
       <MUIXDataGrid columns={columns} rows={rows} />
 
